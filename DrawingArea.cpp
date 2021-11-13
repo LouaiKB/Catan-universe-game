@@ -38,7 +38,10 @@ CatanMainWindow::CatanMainWindow() {
     eventBox.signal_button_press_event().connect(
         sigc::mem_fun(*this, &CatanMainWindow::onClicked)
     );
-    imageBox.pack_start(eventBox);
+    img.set("images/F.png");
+    // img.set_size_request(50, 50);
+    // imageBox.pack_start(img, Gtk::PACK_EXPAND_WIDGET);
+    imageBox.pack_start(eventBox, Gtk::PACK_EXPAND_WIDGET);
     imageBox.set_size_request(1000, 900);
     imageBox.set_halign(Gtk::ALIGN_CENTER);
     imageBox.set_valign(Gtk::ALIGN_CENTER);
@@ -75,38 +78,7 @@ CatanMainWindow::CatanMainWindow() {
 bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
     std::cout << "x= " << button_event-> x << std::endl;
     std::cout << "y= " << button_event-> y << std::endl;
+    std::cout << "-------------------------------" << std::endl;
 }
 
 CatanMainWindow::~CatanMainWindow() {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// bool Drawing::on_scroll_event(GdkEventScroll *event) 
-// {
-//     scale -= event->delta_y/10.;
-//     if (scale < 0.1) scale = 0.1;
-//     std::cout << scale << std::endl;
-//     std::cout.flush();
-//     queue_draw();
-//     return true;
-// }
