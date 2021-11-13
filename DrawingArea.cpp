@@ -33,7 +33,12 @@ CatanMainWindow::CatanMainWindow() {
     set_border_width(20);
 
     // load image into a box widget
-    imageBox.pack_start(drawing);
+    eventBox.add(drawing);
+    eventBox.set_events(Gdk::ALL_EVENTS_MASK);
+    eventBox.signal_button_press_event().connect(
+        sigc::mem_fun(*this, &CatanMainWindow::onClicked)
+    );
+    imageBox.pack_start(eventBox);
     imageBox.set_size_request(1000, 900);
     imageBox.set_halign(Gtk::ALIGN_CENTER);
     imageBox.set_valign(Gtk::ALIGN_CENTER);
@@ -66,6 +71,11 @@ CatanMainWindow::CatanMainWindow() {
     add(mainGrid);
     show_all_children();
 } 
+
+bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
+    std::cout << "x= " << button_event-> x << std::endl;
+    std::cout << "y= " << button_event-> y << std::endl;
+}
 
 CatanMainWindow::~CatanMainWindow() {}
 

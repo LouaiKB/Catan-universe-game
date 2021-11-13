@@ -24,6 +24,7 @@ class CatanMainWindow : public Gtk::Window
 public:
     CatanMainWindow();
     virtual ~CatanMainWindow();
+    bool onClicked(GdkEventButton* button_event);
 
 private:
     Drawing drawing;
@@ -32,5 +33,7 @@ private:
     Gtk::Button startDice;
     Gtk::Label left_label, right_label;
     Gtk::Box* rightUpBox = nullptr;
+    // now we will try adding the event box
+    Gtk::EventBox eventBox;
 };
 #endif
