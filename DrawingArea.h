@@ -12,11 +12,10 @@ public:
     ~Drawing();
 protected:
     virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
-    // bool on_scroll_event(GdkEventScroll *);
 
 private:
-    Glib::RefPtr<Gdk::Pixbuf> image;
-    double scale;
+    Glib::RefPtr<Gdk::Pixbuf> image, smallImage;
+    double scale, scaleSmallImage;
 };
 
 class CatanMainWindow : public Gtk::Window 
@@ -34,12 +33,17 @@ private:
     Gtk::Button startDice;
     Gtk::Label left_label, right_label;
     Gtk::Box* rightUpBox = nullptr;
-    // now we will try adding the event box
     Gtk::EventBox eventBox;
 };
 
 class Coordinates
 {
+public:
+    Coordinates();
+    ~Coordinates();
+    double getXCoordinate(int);
+    double getYCoordinate(int);
+
 private:
     // All x coordonants
     const double X1 = 75.0204;
@@ -58,6 +62,8 @@ private:
     const double X14 = 808.451;
     const double X15 = 885.451;
     const double X16 = 922.931;
+    int horizontalDistanceX = 40;
+    int edgeDistanceX = 76;
 
     // All y coordonants
     const double Y1 = 50.3857;
@@ -73,9 +79,7 @@ private:
     const double Y11 = 720.707;
     const double Y12 = 786.421;
     const double Y13 = 852.98;
-
+    int distanceY = 69;
 };
-
-
 
 #endif
