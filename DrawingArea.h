@@ -4,6 +4,8 @@
 #include <gtkmm/window.h>
 #include <gtkmm/grid.h>
 #include <iostream>
+#include <array>
+
 
 class Drawing : public Gtk::DrawingArea
 {
@@ -12,10 +14,20 @@ public:
     ~Drawing();
 protected:
     virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+    // virtual bool drawingTokens(const Cairo::RefPtr<Cairo::Context> &cr);
 
 private:
-    Glib::RefPtr<Gdk::Pixbuf> image, smallImage;
+    Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage, tk;
     double scale, scaleSmallImage;
+    std::array<std::string, 28> tokensFileName = {
+        "Tokens/A.png", "Tokens/B.png", "Tokens/C.png", "Tokens/D.png", "Tokens/E.png", "Tokens/F.png", "Tokens/G.png", "Tokens/H.png", "Tokens/I.png", "Tokens/J.png",
+        "Tokens/K.png", "Tokens/L.png", "Tokens/M.png", "Tokens/N.png", "Tokens/O.png", "Tokens/P.png", "Tokens/Q.png", "Tokens/R.png", "Tokens/S.png", "Tokens/T.png", 
+        "Tokens/U.png", "Tokens/V.png", "Tokens/W.png", "Tokens/X.png", "Tokens/Y.png", "Tokens/Z.png", "Tokens/Za.png", "Tokens/Zb.png"
+    };
+    double tokensPositions[28][2] = {
+        {475, 120}, {350, 186}, {600, 186}, {225, 257}, {475, 257}, {729, 257}, {100, 325}, {350, 325}, {600, 325}, {852, 325}, {225, 395}, {475, 395}, {730, 395}, {100, 465}, {350, 465}, {852, 465}, {225, 533},
+        {475, 533}, {727, 533}, {100, 600}, {350, 600}, {600, 600}, {852, 600}, {225, 670}, {730, 670}, {350, 743}, {600, 743}, {475, 809} 
+    };
 };
 
 class CatanMainWindow : public Gtk::Window 
@@ -26,7 +38,7 @@ public:
     bool onClicked(GdkEventButton* button_event);
 
 private:
-    Gtk::Image img;
+    // Gtk::Image img;
     Drawing drawing;
     Gtk::Grid mainGrid;
     Gtk::Box imageBox, leftUpBox;
