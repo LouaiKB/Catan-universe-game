@@ -38,7 +38,8 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
     // Drawing all tokens
     for (int i = 0; i < randTokensPositions.size(); i++)
     {
-        tokenImage = Gdk::Pixbuf::create_from_file(tokensFileName.at(i));
+        std::string imageFile = tokensFileName.at(i);
+        tokenImage = Gdk::Pixbuf::create_from_file(imageFile);
         tokenImage = tokenImage->scale_simple((tokenImage->get_height()) * 0.6, (tokenImage->get_width()) * 0.6, 
                                               Gdk::INTERP_BILINEAR);
         cr->save();
@@ -46,8 +47,16 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
         cr->rectangle(0, 0, 1000, 900);
         cr->fill();
         cr->restore();
+        if (i <= 19) 
+            tuilesVector[i].setNumberOfTuile(std::stoi(imageFile.substr(imageFile.find('/') + 1, 1)));
+        else
+            tuilesVector[i].setNumberOfTuile(std::stoi(imageFile.substr(imageFile.find('/') + 1, 2)));
     }
     
+    for (int i = 0; i < tuilesVector.size(); i++)
+    {
+        tuilesVector[i].getNumberOfTuile();
+    }
     // Drawing the Thief token
     tokenImage = Gdk::Pixbuf::create_from_file(tokensFileName.at(tokensFileName.size() - 1));
     tokenImage = tokenImage->scale_simple((tokenImage->get_height()) * 0.6, (tokenImage->get_width()) * 0.6, 

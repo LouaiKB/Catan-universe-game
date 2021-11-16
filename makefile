@@ -12,7 +12,7 @@ CC=g++
 
 ######################
 # All the object files      
-OBJFILES = $(OBJDIR)/main.o $(OBJDIR)/DrawingArea.o 
+OBJFILES = $(OBJDIR)/main.o $(OBJDIR)/DrawingArea.o $(OBJDIR)/CatanElements.o
 
 ###############
 # All the flagss

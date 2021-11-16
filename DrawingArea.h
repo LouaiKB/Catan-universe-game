@@ -7,6 +7,9 @@
 #include <array>
 #include <algorithm>
 #include <random>
+#include <string>
+#include "CatanElements.h"
+
 
 class Drawing : public Gtk::DrawingArea
 {
@@ -23,9 +26,9 @@ protected:
 private:
     Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage;
     std::vector<std::string> tokensFileName = {
-        "Tokens/A.png", "Tokens/B.png", "Tokens/C.png", "Tokens/D.png", "Tokens/E.png", "Tokens/F.png", "Tokens/G.png", "Tokens/H.png", "Tokens/I.png", "Tokens/J.png",
-        "Tokens/K.png", "Tokens/L.png", "Tokens/M.png", "Tokens/N.png", "Tokens/O.png", "Tokens/P.png", "Tokens/Q.png", "Tokens/R.png", "Tokens/S.png", "Tokens/T.png", 
-        "Tokens/U.png", "Tokens/V.png", "Tokens/W.png", "Tokens/X.png", "Tokens/Y.png", "Tokens/Z.png", "Tokens/Za.png", "Tokens/Zb.png", "Tokens/Brigand.png"
+        "Tokens/2.png", "Tokens/2_.png", "Tokens/3.png", "Tokens/3_.png", "Tokens/3__.png", "Tokens/4.png", "Tokens/4_.png", "Tokens/4__.png", "Tokens/5.png", "Tokens/5_.png",
+        "Tokens/5__.png", "Tokens/6.png", "Tokens/6_.png", "Tokens/6__.png", "Tokens/8.png", "Tokens/8__.png", "Tokens/8_.png", "Tokens/9.png", "Tokens/9_.png", "Tokens/9__.png", 
+        "Tokens/10.png", "Tokens/10_.png", "Tokens/10__.png", "Tokens/11.png", "Tokens/11_.png", "Tokens/11__.png", "Tokens/12.png", "Tokens/12_.png", "Tokens/Brigand.png"
     };
     std::vector<std::vector<int>> tokensPositions = {
         {475, 80}, {350, 146}, {600, 146}, {225, 217}, {475, 217}, {729, 217}, {100, 285}, {350, 285}, {600, 285}, {852, 285}, {225, 355}, {475, 355}, {730, 355}, {100, 425}, {350, 425}, {852, 425}, {225, 493},
@@ -33,6 +36,7 @@ private:
     };
     std::vector<int> thiefTokenPositions = {600, 425};
     std::vector<std::vector<int>> randTokensPositions = shuffleTokensPositions();
+    std::array<Tuile, 28> tuilesVector;
 };
 
 class CatanMainWindow : public Gtk::Window 
