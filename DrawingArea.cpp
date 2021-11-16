@@ -51,8 +51,11 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
             tuilesVector[i].setNumberOfTuile(std::stoi(imageFile.substr(imageFile.find('/') + 1, 1)));
         else
             tuilesVector[i].setNumberOfTuile(std::stoi(imageFile.substr(imageFile.find('/') + 1, 2)));
+
+        tuilesVector[i].setRessourceOfTuile(randTokensPositions[i][2]);
+        tuilesVector[i].setNodesCoordinates(randTokensPositions[i][0], randTokensPositions[i][1]);
     }
-    
+
     for (int i = 0; i < tuilesVector.size(); i++)
     {
         tuilesVector[i].getNumberOfTuile();

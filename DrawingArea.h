@@ -30,9 +30,16 @@ private:
         "Tokens/5__.png", "Tokens/6.png", "Tokens/6_.png", "Tokens/6__.png", "Tokens/8.png", "Tokens/8__.png", "Tokens/8_.png", "Tokens/9.png", "Tokens/9_.png", "Tokens/9__.png", 
         "Tokens/10.png", "Tokens/10_.png", "Tokens/10__.png", "Tokens/11.png", "Tokens/11_.png", "Tokens/11__.png", "Tokens/12.png", "Tokens/12_.png", "Tokens/Brigand.png"
     };
+
+    /*
+     * tokenPositions is a vector that contains the x position, the y position and the type of the ressource
+     * {x position, y position, type of the ressource}
+     * we have 5 types of ressources: 1- Brique, 2- Pierre, 3- Mouton, 4- Blé, 5-Bois.
+     */
+
     std::vector<std::vector<int>> tokensPositions = {
-        {475, 80}, {350, 146}, {600, 146}, {225, 217}, {475, 217}, {729, 217}, {100, 285}, {350, 285}, {600, 285}, {852, 285}, {225, 355}, {475, 355}, {730, 355}, {100, 425}, {350, 425}, {852, 425}, {225, 493},
-        {475, 493}, {727, 493}, {100, 560}, {350, 560}, {600, 560}, {852, 560}, {225, 630}, {730, 630}, {350, 703}, {600, 703}, {475, 769}
+        {475, 80, 1}, {350, 146, 2}, {600, 146, 3}, {225, 217, 3}, {475, 217, 4}, {729, 217, 5}, {100, 285, 1}, {350, 285, 4}, {600, 285, 2}, {852, 285, 4}, {225, 355, 5}, {475, 355, 5}, {730, 355, 1}, {100, 425, 4}, {350, 425, 3}, {852, 425, 5}, {225, 493, 1},
+        {475, 493, 1}, {727, 493, 4}, {100, 560, 2}, {350, 560, 2}, {600, 560, 3}, {852, 560, 3}, {225, 630, 3}, {730, 630, 2}, {350, 703, 5}, {600, 703, 4}, {475, 769, 5}
     };
     std::vector<int> thiefTokenPositions = {600, 425};
     std::vector<std::vector<int>> randTokensPositions = shuffleTokensPositions();

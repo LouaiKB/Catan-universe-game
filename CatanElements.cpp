@@ -23,3 +23,13 @@ void Tuile::setRessourceOfTuile(int num)
 {
     this->ressource = num;
 }
+
+void Tuile::setNodesCoordinates(int x, int y)
+{
+    this->nodes[0] = {x - 60, y};
+    this->nodes[1] = {x - 20, y - 69};
+    this->nodes[2] = {x + 20, y - 69};
+    this->nodes[3] = {x + 60, y};
+    this->nodes[4] = {x + 20, y + 69};
+    this->nodes[5] = {x - 60, y +69};
+}
