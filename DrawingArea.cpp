@@ -34,19 +34,30 @@ void Drawing::drawMainWindow(const Cairo::RefPtr<Cairo::Context> &cr, const int 
 }
 
 void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
-{
+{    
+    // Drawing all tokens
     for (int i = 0; i < randTokensPositions.size(); i++)
     {
         tokenImage = Gdk::Pixbuf::create_from_file(tokensFileName.at(i));
-        tokenImage = tokenImage->scale_simple((tokenImage->get_height()) * 0.6, (tokenImage->get_width()) * 0.6, Gdk::INTERP_BILINEAR);
+        tokenImage = tokenImage->scale_simple((tokenImage->get_height()) * 0.6, (tokenImage->get_width()) * 0.6, 
+                                              Gdk::INTERP_BILINEAR);
         cr->save();
-        Gdk::Cairo::set_source_pixbuf(cr, tokenImage, randTokensPositions[i][0], randTokensPositions[i][1] - 40);
+        Gdk::Cairo::set_source_pixbuf(cr, tokenImage, randTokensPositions[i][0], randTokensPositions[i][1]);
         cr->rectangle(0, 0, 1000, 900);
         cr->fill();
         cr->restore();
     }
+    
+    // Drawing the Thief token
+    tokenImage = Gdk::Pixbuf::create_from_file(tokensFileName.at(tokensFileName.size() - 1));
+    tokenImage = tokenImage->scale_simple((tokenImage->get_height()) * 0.6, (tokenImage->get_width()) * 0.6, 
+                                           Gdk::INTERP_BILINEAR);
+    cr->save();
+    Gdk::Cairo::set_source_pixbuf(cr, tokenImage, thiefTokenPositions[0], thiefTokenPositions[1]);
+    cr->rectangle(0, 0, 1000, 900);
+    cr->fill();
+    cr->restore();
 }
-
 
 CatanMainWindow::CatanMainWindow() {
 
@@ -64,9 +75,7 @@ CatanMainWindow::CatanMainWindow() {
     eventBox.signal_button_press_event().connect(
         sigc::mem_fun(*this, &CatanMainWindow::onClicked)
     );
-    // img.set("images/F.png");
-    // img.set_size_request(50, 50);
-    // imageBox.pack_start(img, Gtk::PACK_EXPAND_WIDGET);
+
     imageBox.pack_start(eventBox, Gtk::PACK_EXPAND_WIDGET);
     imageBox.set_size_request(1000, 900);
     imageBox.set_halign(Gtk::ALIGN_CENTER);

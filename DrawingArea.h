@@ -17,20 +17,21 @@ public:
 
 protected:
     virtual bool on_draw(const Cairo::RefPtr<Cairo::Context> &cr);
-    virtual void drawMainWindow(const Cairo::RefPtr<Cairo::Context> &cr, const int, const int);
-    virtual void drawTokens(const Cairo::RefPtr<Cairo::Context> &cr);
+    void drawMainWindow(const Cairo::RefPtr<Cairo::Context> &cr, const int, const int);
+    void drawTokens(const Cairo::RefPtr<Cairo::Context> &cr);
 
 private:
     Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage;
-    std::array<std::string, 28> tokensFileName = {
+    std::vector<std::string> tokensFileName = {
         "Tokens/A.png", "Tokens/B.png", "Tokens/C.png", "Tokens/D.png", "Tokens/E.png", "Tokens/F.png", "Tokens/G.png", "Tokens/H.png", "Tokens/I.png", "Tokens/J.png",
         "Tokens/K.png", "Tokens/L.png", "Tokens/M.png", "Tokens/N.png", "Tokens/O.png", "Tokens/P.png", "Tokens/Q.png", "Tokens/R.png", "Tokens/S.png", "Tokens/T.png", 
-        "Tokens/U.png", "Tokens/V.png", "Tokens/W.png", "Tokens/X.png", "Tokens/Y.png", "Tokens/Z.png", "Tokens/Za.png", "Tokens/Zb.png"
+        "Tokens/U.png", "Tokens/V.png", "Tokens/W.png", "Tokens/X.png", "Tokens/Y.png", "Tokens/Z.png", "Tokens/Za.png", "Tokens/Zb.png", "Tokens/Brigand.png"
     };
     std::vector<std::vector<int>> tokensPositions = {
-        {475, 120}, {350, 186}, {600, 186}, {225, 257}, {475, 257}, {729, 257}, {100, 325}, {350, 325}, {600, 325}, {852, 325}, {225, 395}, {475, 395}, {730, 395}, {100, 465}, {350, 465}, {852, 465}, {225, 533},
-        {475, 533}, {727, 533}, {100, 600}, {350, 600}, {600, 600}, {852, 600}, {225, 670}, {730, 670}, {350, 743}, {600, 743}, {475, 809} 
+        {475, 80}, {350, 146}, {600, 146}, {225, 217}, {475, 217}, {729, 217}, {100, 285}, {350, 285}, {600, 285}, {852, 285}, {225, 355}, {475, 355}, {730, 355}, {100, 425}, {350, 425}, {852, 425}, {225, 493},
+        {475, 493}, {727, 493}, {100, 560}, {350, 560}, {600, 560}, {852, 560}, {225, 630}, {730, 630}, {350, 703}, {600, 703}, {475, 769}
     };
+    std::vector<int> thiefTokenPositions = {600, 425};
     std::vector<std::vector<int>> randTokensPositions = shuffleTokensPositions();
 };
 
