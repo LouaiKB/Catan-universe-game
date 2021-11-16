@@ -3,39 +3,50 @@
 Drawing::Drawing()
 {
     mainBoardImage = Gdk::Pixbuf::create_from_file("images/Board.png");
-    scale = 0.22;
-    scaleSmallImage = 2.7;
 }
 
 Drawing::~Drawing() {}
 
 bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) 
 {
-    // Get width
+    // Get width of the main image
     Gtk::Allocation allocation = get_allocation();
     const int width = allocation.get_width();
     const int height = allocation.get_height();
-    
-    // place the first image
-    mainBoardImage = mainBoardImage->scale_simple(width , height, Gdk::INTERP_BILINEAR);
+
+    // Draw main board
+    this->drawMainWindow(cr, width, height);
+
+    // Draw tokens
+    this->drawTokens(cr);
+
+    return true;
+}
+
+void Drawing::drawMainWindow(const Cairo::RefPtr<Cairo::Context> &cr, const int mainWidth, const int mainHeight)
+{
+    mainBoardImage = mainBoardImage->scale_simple(mainWidth, mainHeight, Gdk::INTERP_BILINEAR);
     cr->save();
     Gdk::Cairo::set_source_pixbuf(cr, mainBoardImage, 0, 0);
     cr->rectangle(0, 0, 1000, 900);
     cr->fill();
     cr->restore();
+}
 
-    for (int i = 0; i < tokensFileName.size(); i++)
+void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
+{
+    for (int i = 0; i < randTokensPositions.size(); i++)
     {
         tokenImage = Gdk::Pixbuf::create_from_file(tokensFileName.at(i));
         tokenImage = tokenImage->scale_simple((tokenImage->get_height()) * 0.6, (tokenImage->get_width()) * 0.6, Gdk::INTERP_BILINEAR);
         cr->save();
-        Gdk::Cairo::set_source_pixbuf(cr, tokenImage, tokensPositions[i][0], tokensPositions[i][1] - 40);
+        Gdk::Cairo::set_source_pixbuf(cr, tokenImage, randTokensPositions[i][0], randTokensPositions[i][1] - 40);
         cr->rectangle(0, 0, 1000, 900);
         cr->fill();
         cr->restore();
     }
-    return true;
 }
+
 
 CatanMainWindow::CatanMainWindow() {
 
@@ -97,6 +108,15 @@ bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
 }
 
 CatanMainWindow::~CatanMainWindow() {}
+
+
+std::vector<std::vector<int>> Drawing::shuffleTokensPositions()
+{
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(std::begin(tokensPositions), std::end(tokensPositions), g);
+    return tokensPositions;
+}
 
 Coordinates::Coordinates() {}
 
