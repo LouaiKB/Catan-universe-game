@@ -14,6 +14,11 @@ int Tuile::getRessourceOfTuile()
     return ressource;
 }
 
+std::array<std::array<int, 3>, 6> Tuile::getNodesCoordinates() 
+{
+    return this->nodes;
+}
+
 void Tuile::setNumberOfTuile(int num)
 {
     this->numberOfTuile = num;
@@ -24,12 +29,12 @@ void Tuile::setRessourceOfTuile(int num)
     this->ressource = num;
 }
 
-void Tuile::setNodesCoordinates(int x, int y)
+void Tuile::setNodesCoordinates(int x, int y, bool occupied)
 {
-    this->nodes[0] = {x - 60, y};
-    this->nodes[1] = {x - 20, y - 69};
-    this->nodes[2] = {x + 20, y - 69};
-    this->nodes[3] = {x + 60, y};
-    this->nodes[4] = {x + 20, y + 69};
-    this->nodes[5] = {x - 60, y +69};
+    this->nodes[0] = {x - 60, y, occupied};
+    this->nodes[1] = {x - 20, y - 69, occupied};
+    this->nodes[2] = {x + 20, y - 69, occupied};
+    this->nodes[3] = {x + 60, y, occupied};
+    this->nodes[4] = {x + 20, y + 69, occupied};
+    this->nodes[5] = {x - 60, y +69, occupied};
 }

@@ -20,6 +20,9 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // Draw tokens
     this->drawTokens(cr);
 
+    // Draw circles
+    this->drawNodeCircles(cr);
+
     return true;
 }
 
@@ -47,19 +50,11 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
         cr->rectangle(0, 0, 1000, 900);
         cr->fill();
         cr->restore();
-        if (i <= 19) 
-            tuilesVector[i].setNumberOfTuile(std::stoi(imageFile.substr(imageFile.find('/') + 1, 1)));
-        else
-            tuilesVector[i].setNumberOfTuile(std::stoi(imageFile.substr(imageFile.find('/') + 1, 2)));
 
-        tuilesVector[i].setRessourceOfTuile(randTokensPositions[i][2]);
-        tuilesVector[i].setNodesCoordinates(randTokensPositions[i][0], randTokensPositions[i][1]);
+        // set tuiles 
+        this->setTuiles(i, imageFile);
     }
 
-    for (int i = 0; i < tuilesVector.size(); i++)
-    {
-        tuilesVector[i].getNumberOfTuile();
-    }
     // Drawing the Thief token
     tokenImage = Gdk::Pixbuf::create_from_file(tokensFileName.at(tokensFileName.size() - 1));
     tokenImage = tokenImage->scale_simple((tokenImage->get_height()) * 0.6, (tokenImage->get_width()) * 0.6, 
@@ -69,6 +64,39 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
     cr->rectangle(0, 0, 1000, 900);
     cr->fill();
     cr->restore();
+}
+
+void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
+{
+    for (int i = 0; i < this->tuilesVector.size(); i++)
+    {
+        // we will get all the nodes of each tuile
+        std::array<std::array<int, 3>, 6> nodes = tuilesVector[i].getNodesCoordinates();
+        
+        // loop through each node and draw a cricle
+        for (int nodeindex = 0; nodeindex < nodes.size(); nodeindex++)
+        {
+            cr->set_line_width(1.0);
+            cr->save();
+            cr->arc(nodes[nodeindex][0], nodes[nodeindex][1], 5.9, 0.0, 2 * M_PI);
+            cr->close_path();
+            cr->set_source_rgba(0.0, 0.8, 0.0, 0.6);
+            cr->fill_preserve();
+            cr->restore();
+            cr->stroke();
+        }
+    }
+}
+
+void Drawing::setTuiles(int index, std::string img)
+{
+    if (index <= 19)
+        this->tuilesVector[index].setNumberOfTuile(std::stoi(img.substr(img.find('/') + 1, 1)));
+    else
+        this->tuilesVector[index].setNumberOfTuile(std::stoi(img.substr(img.find('/') + 1, 2)));
+    
+    this->tuilesVector[index].setRessourceOfTuile(randTokensPositions[index][2]);
+    this->tuilesVector[index].setNodesCoordinates(randTokensPositions[index][0], randTokensPositions[index][1]);
 }
 
 CatanMainWindow::CatanMainWindow() {
