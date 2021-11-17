@@ -31,10 +31,10 @@ void Tuile::setRessourceOfTuile(int num)
 
 void Tuile::setNodesCoordinates(int x, int y, bool occupied)
 {
-    this->nodes[0] = {x - 60, y, occupied};
-    this->nodes[1] = {x - 20, y - 69, occupied};
-    this->nodes[2] = {x + 20, y - 69, occupied};
-    this->nodes[3] = {x + 60, y, occupied};
-    this->nodes[4] = {x + 20, y + 69, occupied};
-    this->nodes[5] = {x - 60, y +69, occupied};
+    this->nodes[0] = {x - 60, y + 28, occupied};
+    this->nodes[1] = {x - 20, y - 40, occupied};
+    this->nodes[2] = {x + 65, y - 40, occupied};
+    this->nodes[3] = {x + 105, y + 28, occupied};
+    this->nodes[4] = {x + 65, y + 93, occupied};
+    this->nodes[5] = {x - 20, y + 93, occupied};
 }
