@@ -67,23 +67,36 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
 }
 
 void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
-{
+{   
+    // Initialize the static vector of nodes  
+    Node::occupiedNodes = {{0}};
+
+    // loop through each tuile object
     for (int i = 0; i < this->tuilesVector.size(); i++)
     {
         // we will get all the nodes of each tuile
-        std::array<std::array<int, 3>, 6> nodes = tuilesVector[i].getNodesCoordinates();
+        std::array<Node, 6> nodes = tuilesVector[i].getNodesCoordinates();
+        
+        // boolean variable to check if the node is occupied or not
+        std::vector<int> currentNode;
         
         // loop through each node and draw a cricle
         for (int nodeindex = 0; nodeindex < nodes.size(); nodeindex++)
         {
-            cr->set_line_width(1.0);
-            cr->save();
-            cr->arc(nodes[nodeindex][0], nodes[nodeindex][1], 5.9, 0.0, 2 * M_PI);
-            cr->close_path();
-            cr->set_source_rgba(0.0, 0.8, 0.0, 0.6);
-            cr->fill_preserve();
-            cr->restore();
-            cr->stroke();
+            currentNode = {nodes[nodeindex].getX(), nodes[nodeindex].getY()};
+
+            if (!Node::checkIfNodeIsOccupied(currentNode))
+            {
+                cr->set_line_width(1.0);
+                cr->save();
+                cr->arc(nodes[nodeindex].getX(), nodes[nodeindex].getY(), 7.2, 0.0, 2 * M_PI);
+                cr->close_path();
+                cr->set_source_rgba(0.0, 0.8, 0.0, 0.6);
+                cr->fill_preserve();
+                cr->restore();
+                cr->stroke();
+                Node::setOccupiedNodes(currentNode);
+            }
         }
     }
 }

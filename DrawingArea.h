@@ -62,7 +62,6 @@ public:
     bool onClicked(GdkEventButton* button_event);
 
 private:
-    // Gtk::Image img;
     Drawing drawing;
     Gtk::Grid mainGrid;
     Gtk::Box imageBox, leftUpBox;
