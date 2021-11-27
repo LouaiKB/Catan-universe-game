@@ -20,13 +20,15 @@ public:
 
 protected:
     virtual bool on_draw(const Cairo::RefPtr<Cairo::Context> &cr);
+    virtual bool on_button_press_event(GdkEventButton* event);
     void drawMainWindow(const Cairo::RefPtr<Cairo::Context> &cr, const int, const int);
     void drawTokens(const Cairo::RefPtr<Cairo::Context> &cr);
     void drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr);
     void setTuiles(int, std::string);
+    void drawHouses(const Cairo::RefPtr<Cairo::Context> &cr);
 
 private:
-    Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage;
+    Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage, houseImage;
     std::vector<std::string> tokensFileName = {
         "Tokens/2.png", "Tokens/2_.png", "Tokens/3.png", "Tokens/3_.png", "Tokens/3__.png",
         "Tokens/4.png", "Tokens/4_.png", "Tokens/4__.png", "Tokens/5.png", "Tokens/5_.png",

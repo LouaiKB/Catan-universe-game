@@ -54,10 +54,18 @@ int Node::getX() { return this->x; }
 int Node::getY() { return this->y; }
 
 std::vector<std::vector<int>> Node::occupiedNodes;
+std::vector<double> Node::clickedNode;
+bool Node::isClicked = false;
 
 void Node::setOccupiedNodes(std::vector<int> arr)
 {
     Node::occupiedNodes.push_back(arr);
+}
+
+void Node::setClickedNode(double x, double y)
+{
+    Node::clickedNode.push_back(x);
+    Node::clickedNode.push_back(y);
 }
 
 bool Node::checkIfNodeIsOccupied(std::vector<int> arr)

@@ -3,9 +3,21 @@
 Drawing::Drawing()
 {
     mainBoardImage = Gdk::Pixbuf::create_from_file("images/Board.png");
+    // Node::isClicked = false;
+    add_events(Gdk::BUTTON_PRESS_MASK);
 }
 
 Drawing::~Drawing() {}
+
+bool Drawing::on_button_press_event(GdkEventButton* event)
+{
+    Node::clickedNode = {};
+    Node::setClickedNode(event->x, event->y);
+    Node::isClicked = true;
+    queue_draw();
+}
+
+
 
 bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) 
 {
@@ -22,6 +34,14 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     // Draw circles
     this->drawNodeCircles(cr);
+
+    // Draw house onclick
+    if (Node::isClicked) {
+        // std::cout << "DRAW HOUSE INSIDE SCOPE" << std::endl;
+        this->drawHouses(cr);
+        // Node::isClicked ;
+    Node::isClicked = false;
+    }
 
     return true;
 }
@@ -112,6 +132,32 @@ void Drawing::setTuiles(int index, std::string img)
     this->tuilesVector[index].setNodesCoordinates(randTokensPositions[index][0], randTokensPositions[index][1]);
 }
 
+// Initialize the draw house method
+void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
+{
+    // get the house
+    houseImage = Gdk::Pixbuf::create_from_file("Tokens/green_house.png");
+    houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.6, (houseImage->get_width()) * 0.6,
+                                          Gdk::INTERP_BILINEAR);
+    cr->save();
+    double x_pos = Node::clickedNode[0] - 20;
+    double y_pos = Node::clickedNode[1] - 20;
+
+    Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
+    cr->rectangle(0, 0, 1000, 900);
+    cr->fill();
+    cr->restore();
+}
+
+std::vector<std::vector<int>> Drawing::shuffleTokensPositions()
+{
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(std::begin(tokensPositions), std::end(tokensPositions), g);
+    return tokensPositions;
+}
+
+
 CatanMainWindow::CatanMainWindow() {
 
     // set title
@@ -171,14 +217,6 @@ bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
 
 CatanMainWindow::~CatanMainWindow() {}
 
-
-std::vector<std::vector<int>> Drawing::shuffleTokensPositions()
-{
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(std::begin(tokensPositions), std::end(tokensPositions), g);
-    return tokensPositions;
-}
 
 Coordinates::Coordinates() {}
 

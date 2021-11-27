@@ -12,6 +12,9 @@ public:
     Node(int, int);
     ~Node();
     static std::vector<std::vector<int>> occupiedNodes;
+    static std::vector<double> clickedNode;
+    static bool isClicked;
+    static void setClickedNode(double, double);
     static void setOccupiedNodes(std::vector<int>);
     static bool checkIfNodeIsOccupied(std::vector<int>);
     int getX();
@@ -22,6 +25,7 @@ private:
     int y;
     bool occupied;
 };
+
 class Tuile
 {
 public:
