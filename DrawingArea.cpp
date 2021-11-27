@@ -12,8 +12,11 @@ Drawing::~Drawing() {}
 bool Drawing::on_button_press_event(GdkEventButton* event)
 {
     Node::clickedNode = {};
-    Node::setClickedNode(event->x, event->y);
-    Node::isClicked = true;
+    
+    if (Node::checkIfNodeIsOccupied({(int)event->x, (int)event->y})){
+        Node::setClickedNode(event->x, event->y);
+        Node::isClicked = true;
+    }
     queue_draw();
 }
 
@@ -40,7 +43,7 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         // std::cout << "DRAW HOUSE INSIDE SCOPE" << std::endl;
         this->drawHouses(cr);
         // Node::isClicked ;
-    Node::isClicked = false;
+    // Node::isClicked = false;
     }
 
     return true;
