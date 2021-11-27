@@ -12,9 +12,10 @@ Drawing::~Drawing() {}
 bool Drawing::on_button_press_event(GdkEventButton* event)
 {
     Node::clickedNode = {};
-    
-    if (Node::checkIfNodeIsOccupied({(int)event->x, (int)event->y})){
+    Node node((int)event->x, (int)event->y);
+    if (Node::checkIfNodeIsOccupied(node)){
         Node::setClickedNode(event->x, event->y);
+        Node::setOccupiedHouseNodes({(int)event->x, (int)event->y});
         Node::isClicked = true;
     }
     queue_draw();
@@ -92,7 +93,7 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
 void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
 {   
     // Initialize the static vector of nodes  
-    Node::occupiedNodes = {{0}};
+    Node::allNodes = {Node()};
 
     // loop through each tuile object
     for (int i = 0; i < this->tuilesVector.size(); i++)
@@ -101,24 +102,30 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
         std::array<Node, 6> nodes = tuilesVector[i].getNodesCoordinates();
         
         // boolean variable to check if the node is occupied or not
-        std::vector<int> currentNode;
+        // std::vector<int> currentNode;
         
         // loop through each node and draw a cricle
         for (int nodeindex = 0; nodeindex < nodes.size(); nodeindex++)
         {
-            currentNode = {nodes[nodeindex].getX(), nodes[nodeindex].getY()};
+            // currentNode = {nodes[nodeindex].getX(), nodes[nodeindex].getY()};
+
+            Node currentNode = nodes[nodeindex];
 
             if (!Node::checkIfNodeIsOccupied(currentNode))
             {
                 cr->set_line_width(1.0);
                 cr->save();
-                cr->arc(nodes[nodeindex].getX(), nodes[nodeindex].getY(), 7.2, 0.0, 2 * M_PI);
+                cr->arc(currentNode.getX(), currentNode.getY(), 7.2, 0.0, 2 * M_PI);
                 cr->close_path();
+                // if (Node::checkIfNodeIsOccupied(currentNode, true)) {
+                //     cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
+                // } else {
                 cr->set_source_rgba(0.0, 0.8, 0.0, 0.6);
+                // }
                 cr->fill_preserve();
                 cr->restore();
                 cr->stroke();
-                Node::setOccupiedNodes(currentNode);
+                Node::setAllNodes(currentNode);
             }
         }
     }

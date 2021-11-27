@@ -11,12 +11,15 @@ public:
     Node();
     Node(int, int);
     ~Node();
-    static std::vector<std::vector<int>> occupiedNodes;
+    static std::vector<Node> allNodes;
+    static std::vector<std::vector<int>> occupiedHouseNodes;
     static std::vector<double> clickedNode;
     static bool isClicked;
     static void setClickedNode(double, double);
-    static void setOccupiedNodes(std::vector<int>);
-    static bool checkIfNodeIsOccupied(std::vector<int>);
+    static void setOccupiedHouseNodes(std::vector<int>);
+    static void setAllNodes(Node);
+    static bool checkIfNodeIsOccupied(Node, bool houseNode=false);
+    static std::vector<std::vector<int>> getAdjacentNodes();
     int getX();
     int getY();
 

@@ -53,13 +53,14 @@ Node::Node(int a, int b) : x(a), y(b) {
 int Node::getX() { return this->x; }
 int Node::getY() { return this->y; }
 
-std::vector<std::vector<int>> Node::occupiedNodes;
+std::vector<std::vector<int>> Node::occupiedHouseNodes;
+std::vector<Node> Node::allNodes;
 std::vector<double> Node::clickedNode;
 bool Node::isClicked = false;
 
-void Node::setOccupiedNodes(std::vector<int> arr)
+void Node::setAllNodes(Node node)
 {
-    Node::occupiedNodes.push_back(arr);
+    Node::allNodes.push_back(node);
 }
 
 void Node::setClickedNode(double x, double y)
@@ -68,20 +69,44 @@ void Node::setClickedNode(double x, double y)
     Node::clickedNode.push_back(y);
 }
 
-bool Node::checkIfNodeIsOccupied(std::vector<int> arr)
+void Node::setOccupiedHouseNodes(std::vector<int> arr)
+{
+    Node::occupiedHouseNodes.push_back(arr);
+}
+
+bool Node::checkIfNodeIsOccupied(Node node, bool isHouseNode)
 {
     bool foundx = false;
-    for (int i = 0; i < Node::occupiedNodes.size(); i++)
-    {
-        if ((arr[0] == Node::occupiedNodes[i][0] || 
-            (arr[0] <= Node::occupiedNodes[i][0] + 10 &&
-             arr[0] >= Node::occupiedNodes[i][0] - 10)) && 
-            (arr[1] == Node::occupiedNodes[i][1] || 
-            (arr[1] <= Node::occupiedNodes[i][1] + 10 &&
-             arr[1] >= Node::occupiedNodes[i][1] - 10))) {
-                foundx = true;
-                break;
+
+    if (!isHouseNode) {
+        for (int i = 0; i < Node::allNodes.size(); i++)
+        {
+            if ((node.getX() == Node::allNodes[i].getX() || 
+                (node.getX() <= Node::allNodes[i].getX() + 10 &&
+                node.getX() >= Node::allNodes[i].getX() - 10)) && 
+                (node.getY() == Node::allNodes[i].getY() || 
+                (node.getY() <= Node::allNodes[i].getY() + 10 &&
+                node.getY() >= Node::allNodes[i].getY() - 10))) {
+                    foundx = true;
+                    break;
+            }
         }
     }
+    // else 
+    // {
+    //     for (int i = 0; i < Node::occupiedHouseNodes.size(); i++)
+    //     {
+    //         if ((arr[0] == Node::occupiedHouseNodes[i][0] || 
+    //             (arr[0] <= Node::occupiedHouseNodes[i][0] + 10 &&
+    //             arr[0] >= Node::occupiedHouseNodes[i][0] - 10)) && 
+    //             (arr[1] == Node::occupiedHouseNodes[i][1] || 
+    //             (arr[1] <= Node::occupiedHouseNodes[i][1] + 10 &&
+    //             arr[1] >= Node::occupiedHouseNodes[i][1] - 10))) {
+    //                 foundx = true;
+    //                 break;
+    //         }
+    //     }
+    // }
+    
     return foundx;
 }
