@@ -22,7 +22,8 @@ public:
     static void setOccupiedNodes(Node);
     static void setAllNodes(Node);
     static bool checkIfNodeIsOccupied(Node, bool houseNode=false);
-    
+    static Node getSpecificNode(Node);    
+
     // class methods
     void setOccupied();
     bool isOccupied();

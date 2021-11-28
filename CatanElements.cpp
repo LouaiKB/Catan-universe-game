@@ -60,10 +60,10 @@ bool Node::isOccupied() {
 void Node::setAdjacentNodes() {
     
     // setting the side Node 
-    if (Node::checkIfNodeIsOccupied(Node(x - 85, y))) {
-        adjacentNodes.push_back(Node(x - 85, y));
-        adjacentNodes.push_back(Node(x + 45, y - 70));
-        adjacentNodes.push_back(Node(x + 45, y + 70));
+    if (Node::checkIfNodeIsOccupied(Node(x - 90, y))) {
+        adjacentNodes.push_back(Node(x - 90, y));
+        adjacentNodes.push_back(Node(x + 50, y - 70));
+        adjacentNodes.push_back(Node(x + 50, y + 70));
     } else {
         adjacentNodes.push_back(Node(x + 85, y));
         adjacentNodes.push_back(Node(x - 40, y - 70));
@@ -125,21 +125,36 @@ bool Node::checkIfNodeIsOccupied(Node node, bool isHouseNode)
             }
         }
     }
-    // else 
-    // {
-    //     for (int i = 0; i < Node::occupiedHouseNodes.size(); i++)
-    //     {
-    //         if ((arr[0] == Node::occupiedHouseNodes[i][0] || 
-    //             (arr[0] <= Node::occupiedHouseNodes[i][0] + 10 &&
-    //             arr[0] >= Node::occupiedHouseNodes[i][0] - 10)) && 
-    //             (arr[1] == Node::occupiedHouseNodes[i][1] || 
-    //             (arr[1] <= Node::occupiedHouseNodes[i][1] + 10 &&
-    //             arr[1] >= Node::occupiedHouseNodes[i][1] - 10))) {
-    //                 foundx = true;
-    //                 break;
-    //         }
-    //     }
-    // }
+    else 
+    {
+        for (int i = 0; i < Node::allNodes.size(); i++)
+        {
+            if ((node.getX() == Node::allNodes[i].getX() || 
+                (node.getX() <= Node::allNodes[i].getX() + 5 &&
+                node.getX() >= Node::allNodes[i].getX() - 5)) && 
+                (node.getY() == Node::allNodes[i].getY() || 
+                (node.getY() <= Node::allNodes[i].getY() + 5 &&
+                node.getY() >= Node::allNodes[i].getY() - 5))) {
+                    foundx = true;
+                    break;
+            }
+        }
+    }
     
     return foundx;
+}
+
+Node Node::getSpecificNode(Node node)
+{
+    for (int i = 0; i < Node::allNodes.size(); i++) {
+        if ((node.getX() == Node::allNodes[i].getX() || 
+            (node.getX() <= Node::allNodes[i].getX() + 20 &&
+            node.getX() >= Node::allNodes[i].getX() - 20)) && 
+            (node.getY() == Node::allNodes[i].getY() || 
+            (node.getY() <= Node::allNodes[i].getY() + 20 &&
+            node.getY() >= Node::allNodes[i].getY() - 20))) {
+                return Node::allNodes[i];
+        }
+    }
+    return Node();
 }

@@ -15,7 +15,7 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
     // this Node is occupied
     node.setOccupied();
     node.setAdjacentNodes();
-    if (Node::checkIfNodeIsOccupied(node)){
+    if (Node::checkIfNodeIsOccupied(node, true)){
         Node::setClickedNode(node);
         // Node::setOccupiedHouseNodes({(int)event->x, (int)event->y});
         Node::isClicked = true;
@@ -160,15 +160,20 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
     Node::clickedNode[0].setAdjacentNodes();
     std::vector<Node> adjacentNodes = Node::clickedNode[0].getAdjacentNodes();
     for (int i = 0; i < adjacentNodes.size(); i++) {
-        cr->set_line_width(1.0);
-        cr->save();
-        cr->arc(adjacentNodes[i].getX(), adjacentNodes[i].getY(), 7.2, 0.0, 2 * M_PI);
-        cr->close_path();
-        cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
-        cr->fill_preserve();
-        cr->restore();
-        cr->stroke();
-        // Node::setAllNodes(adjacentNodes[i]);
+        // search the node from all nodes
+        Node specifiNode = Node::getSpecificNode(adjacentNodes[i]);
+        
+        // if we find that node 
+        if (specifiNode.getX()) {
+            cr->set_line_width(1.0);
+            cr->save();
+            cr->arc(specifiNode.getX(), specifiNode.getY(), 7.2, 0.0, 2 * M_PI);
+            cr->close_path();
+            cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
+            cr->fill_preserve();
+            cr->restore();
+            cr->stroke();
+        }
     }
     queue_draw();
 }
