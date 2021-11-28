@@ -49,13 +49,45 @@ Node::~Node() {}
 Node::Node(int a, int b) : x(a), y(b) {
 }
 
+void Node::setOccupied() {
+    this->occupied = true;
+}
+
+bool Node::isOccupied() {
+    return this->occupied;
+}
+
+void Node::setAdjacentNodes() {
+    
+    // setting the side Node 
+    if (Node::checkIfNodeIsOccupied(Node(x - 85, y))) {
+        adjacentNodes.push_back(Node(x - 85, y));
+        adjacentNodes.push_back(Node(x + 45, y - 70));
+        adjacentNodes.push_back(Node(x + 45, y + 70));
+    } else {
+        adjacentNodes.push_back(Node(x + 85, y));
+        adjacentNodes.push_back(Node(x - 40, y - 70));
+        adjacentNodes.push_back(Node(x - 40, y + 70));
+    }
+
+    // set all AdjacentNodes occupied
+    for (int i = 0; i < adjacentNodes.size(); i++) {
+        adjacentNodes[i].setOccupied();
+    }
+}
 
 int Node::getX() { return this->x; }
 int Node::getY() { return this->y; }
 
-std::vector<std::vector<int>> Node::occupiedHouseNodes;
+std::vector<Node> Node::getAdjacentNodes() {
+    return this->adjacentNodes;
+}
+
+std::vector<Node> Node::occupiedNodes;
 std::vector<Node> Node::allNodes;
-std::vector<double> Node::clickedNode;
+// std::vector<Node> Node::clickedNode;
+
+Node * Node::clickedNode = new Node[1];
 bool Node::isClicked = false;
 
 void Node::setAllNodes(Node node)
@@ -63,15 +95,16 @@ void Node::setAllNodes(Node node)
     Node::allNodes.push_back(node);
 }
 
-void Node::setClickedNode(double x, double y)
+void Node::setClickedNode(Node node)
 {
-    Node::clickedNode.push_back(x);
-    Node::clickedNode.push_back(y);
+    delete[] Node::clickedNode;
+    Node::clickedNode = new Node[1];
+    Node::clickedNode[0] = node;
 }
 
-void Node::setOccupiedHouseNodes(std::vector<int> arr)
+void Node::setOccupiedNodes(Node node) 
 {
-    Node::occupiedHouseNodes.push_back(arr);
+    Node::occupiedNodes.push_back(node);
 }
 
 bool Node::checkIfNodeIsOccupied(Node node, bool isHouseNode)

@@ -11,17 +11,18 @@ Drawing::~Drawing() {}
 
 bool Drawing::on_button_press_event(GdkEventButton* event)
 {
-    Node::clickedNode = {};
     Node node((int)event->x, (int)event->y);
+    // this Node is occupied
+    node.setOccupied();
+    node.setAdjacentNodes();
     if (Node::checkIfNodeIsOccupied(node)){
-        Node::setClickedNode(event->x, event->y);
-        Node::setOccupiedHouseNodes({(int)event->x, (int)event->y});
+        Node::setClickedNode(node);
+        // Node::setOccupiedHouseNodes({(int)event->x, (int)event->y});
         Node::isClicked = true;
     }
+    // delete[] Node::clickedNode;
     queue_draw();
 }
-
-
 
 bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) 
 {
@@ -37,7 +38,7 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     this->drawTokens(cr);
 
     // Draw circles
-    this->drawNodeCircles(cr);
+        this->drawNodeCircles(cr);
 
     // Draw house onclick
     if (Node::isClicked) {
@@ -117,11 +118,7 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
                 cr->save();
                 cr->arc(currentNode.getX(), currentNode.getY(), 7.2, 0.0, 2 * M_PI);
                 cr->close_path();
-                // if (Node::checkIfNodeIsOccupied(currentNode, true)) {
-                //     cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
-                // } else {
                 cr->set_source_rgba(0.0, 0.8, 0.0, 0.6);
-                // }
                 cr->fill_preserve();
                 cr->restore();
                 cr->stroke();
@@ -129,6 +126,7 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
             }
         }
     }
+    // queue_draw();
 }
 
 void Drawing::setTuiles(int index, std::string img)
@@ -150,13 +148,29 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
     houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.6, (houseImage->get_width()) * 0.6,
                                           Gdk::INTERP_BILINEAR);
     cr->save();
-    double x_pos = Node::clickedNode[0] - 20;
-    double y_pos = Node::clickedNode[1] - 20;
+    double x_pos = Node::clickedNode[0].getX() - 20;
+    double y_pos = Node::clickedNode[0].getY() - 20;
+    
 
     Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
     cr->rectangle(0, 0, 1000, 900);
     cr->fill();
     cr->restore();
+
+    Node::clickedNode[0].setAdjacentNodes();
+    std::vector<Node> adjacentNodes = Node::clickedNode[0].getAdjacentNodes();
+    for (int i = 0; i < adjacentNodes.size(); i++) {
+        cr->set_line_width(1.0);
+        cr->save();
+        cr->arc(adjacentNodes[i].getX(), adjacentNodes[i].getY(), 7.2, 0.0, 2 * M_PI);
+        cr->close_path();
+        cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
+        cr->fill_preserve();
+        cr->restore();
+        cr->stroke();
+        // Node::setAllNodes(adjacentNodes[i]);
+    }
+    queue_draw();
 }
 
 std::vector<std::vector<int>> Drawing::shuffleTokensPositions()

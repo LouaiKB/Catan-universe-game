@@ -11,15 +11,23 @@ public:
     Node();
     Node(int, int);
     ~Node();
+    
+    // All static methods
     static std::vector<Node> allNodes;
-    static std::vector<std::vector<int>> occupiedHouseNodes;
-    static std::vector<double> clickedNode;
+    static std::vector<Node> occupiedNodes;
+    // static std::vector<Node> clickedNode;
+    static Node *clickedNode;
     static bool isClicked;
-    static void setClickedNode(double, double);
-    static void setOccupiedHouseNodes(std::vector<int>);
+    static void setClickedNode(Node);
+    static void setOccupiedNodes(Node);
     static void setAllNodes(Node);
     static bool checkIfNodeIsOccupied(Node, bool houseNode=false);
-    static std::vector<std::vector<int>> getAdjacentNodes();
+    
+    // class methods
+    void setOccupied();
+    bool isOccupied();
+    void setAdjacentNodes();
+    std::vector<Node> getAdjacentNodes();
     int getX();
     int getY();
 
@@ -27,6 +35,7 @@ private:
     int x;
     int y;
     bool occupied;
+    std::vector<Node> adjacentNodes;
 };
 
 class Tuile
