@@ -53,7 +53,8 @@ private:
     };
     std::vector<int> thiefTokenPositions = {600, 425};
     std::vector<std::vector<int>> randTokensPositions = shuffleTokensPositions();
-    std::array<Tuile, 28> tuilesVector;
+    // std::array<Tuile, 28> tuilesVector;
+    std::vector<Tuile> *tuilesVector = new std::vector<Tuile>(28);
 };
 
 class CatanMainWindow : public Gtk::Window 

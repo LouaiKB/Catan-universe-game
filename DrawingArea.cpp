@@ -99,10 +99,10 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
     *Node::allNodes = {Node()};
 
     // loop through each tuile object
-    for (int i = 0; i < this->tuilesVector.size(); i++)
+    for (int i = 0; i < this->tuilesVector->size(); i++)
     {
         // we will get all the nodes of each tuile
-        std::vector<Node> *nodes = tuilesVector[i].getNodesCoordinates();
+        std::vector<Node> *nodes = tuilesVector->at(i).getNodesCoordinates();
         
         // boolean variable to check if the node is occupied or not
         // std::vector<int> currentNode;
@@ -135,12 +135,12 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
 void Drawing::setTuiles(int index, std::string img)
 {
     if (index <= 19)
-        this->tuilesVector[index].setNumberOfTuile(std::stoi(img.substr(img.find('/') + 1, 1)));
+        this->tuilesVector->at(index).setNumberOfTuile(std::stoi(img.substr(img.find('/') + 1, 1)));
     else
-        this->tuilesVector[index].setNumberOfTuile(std::stoi(img.substr(img.find('/') + 1, 2)));
+        this->tuilesVector->at(index).setNumberOfTuile(std::stoi(img.substr(img.find('/') + 1, 2)));
     
-    this->tuilesVector[index].setRessourceOfTuile(randTokensPositions[index][2]);
-    this->tuilesVector[index].setNodesCoordinates(randTokensPositions[index][0], randTokensPositions[index][1]);
+    this->tuilesVector->at(index).setRessourceOfTuile(randTokensPositions[index][2]);
+    this->tuilesVector->at(index).setNodesCoordinates(randTokensPositions[index][0], randTokensPositions[index][1]);
 }
 
 // Initialize the draw house method
@@ -180,7 +180,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
     }
     queue_draw();
     Node node = Node::clickedNode[0];
-    Tuile::getTilesOfANode(node, tuilesVector);
+    std::vector<int> a = Tuile::getTilesOfANode(node, tuilesVector);
     Node::playerOn = false;
 }
 

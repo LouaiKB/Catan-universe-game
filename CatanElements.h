@@ -45,7 +45,8 @@ class Tuile
 public:
     Tuile();
     ~Tuile();
-    static std::vector<int> getTilesOfANode(Node, std::array<Tuile, 28>);
+    static std::vector<int> getTilesOfANode(Node, std::vector<Tuile>*);
+    static std::vector<int> getRessourceOfSpecificTiles(Node, std::vector<Tuile>*);
     int getNumberOfTuile();
     int getRessourceOfTuile();
     std::vector<Node>* getNodesCoordinates();
