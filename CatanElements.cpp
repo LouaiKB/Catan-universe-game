@@ -14,7 +14,7 @@ int Tuile::getRessourceOfTuile()
     return ressource;
 }
 
-std::array<Node, 6> Tuile::getNodesCoordinates() 
+std::vector<Node>* Tuile::getNodesCoordinates() 
 {
     return this->nodes;
 }
@@ -31,20 +31,34 @@ void Tuile::setRessourceOfTuile(int num)
 
 void Tuile::setNodesCoordinates(int x, int y)
 {
-    this->nodes[0] = Node(x - 60, y + 28);
-    this->nodes[1] = Node(x - 20, y - 40);
-    this->nodes[2] = Node(x + 65, y - 40);
-    this->nodes[3] = Node(x + 105, y + 28);
-    this->nodes[4] = Node(x + 65, y + 93);
-    this->nodes[5] = Node(x - 20, y + 93);
+    this->nodes->at(0) = Node(x - 60, y + 28);
+    this->nodes->at(1) = Node(x - 20, y - 40);
+    this->nodes->at(2) = Node(x + 65, y - 40);
+    this->nodes->at(3) = Node(x + 105, y + 28);
+    this->nodes->at(4) = Node(x + 65, y + 93);
+    this->nodes->at(5) = Node(x - 20, y + 93);
 }
 
+std::vector<int> Tuile::getTilesOfANode(Node node, std::array<Tuile, 28> allTiles)
+{
+    std::vector<int> numberOfCorrespondedTiles;
+    // parsing all the Tiles
+    for (int i = 0; i < allTiles.size(); i++) {
+        // know we will parse each node of the tile 
+        std::vector<Node>* nodes = allTiles[i].getNodesCoordinates();
+        if (Node::checkIfNodeIsOccupied(node, nodes)) {
+            numberOfCorrespondedTiles.push_back(allTiles[i].getNumberOfTuile());
+        }
+    }
+    return numberOfCorrespondedTiles;
+}
 
 Node::Node() : x(0), y(0) {
     this->occupied = false;
 }
 
-Node::~Node() {}
+Node::~Node() {
+}
 
 Node::Node(int a, int b) : x(a), y(b) {
 }
@@ -60,7 +74,7 @@ bool Node::isOccupied() {
 void Node::setAdjacentNodes() {
     
     // setting the side Node 
-    if (Node::checkIfNodeIsOccupied(Node(x - 90, y))) {
+    if (Node::checkIfNodeIsOccupied(Node(x - 90, y), Node::allNodes)) {
         adjacentNodes.push_back(Node(x - 90, y));
         adjacentNodes.push_back(Node(x + 50, y - 70));
         adjacentNodes.push_back(Node(x + 50, y + 70));
@@ -83,16 +97,17 @@ std::vector<Node> Node::getAdjacentNodes() {
     return this->adjacentNodes;
 }
 
-std::vector<Node> Node::occupiedNodes;
-std::vector<Node> Node::allNodes;
+std::vector<Node> *Node::occupiedNodes = new std::vector<Node>();
+std::vector<Node> *Node::allNodes = new std::vector<Node>();
 // std::vector<Node> Node::clickedNode;
 
 Node * Node::clickedNode = new Node[1];
 bool Node::isClicked = false;
+bool Node::playerOn = true;
 
 void Node::setAllNodes(Node node)
 {
-    Node::allNodes.push_back(node);
+    Node::allNodes->push_back(node);
 }
 
 void Node::setClickedNode(Node node)
@@ -104,56 +119,37 @@ void Node::setClickedNode(Node node)
 
 void Node::setOccupiedNodes(Node node) 
 {
-    Node::occupiedNodes.push_back(node);
+    Node::occupiedNodes->push_back(node);
 }
 
-bool Node::checkIfNodeIsOccupied(Node node, bool isHouseNode)
+bool Node::checkIfNodeIsOccupied(Node node, std::vector<Node> *allNodes)
 {
     bool foundx = false;
-
-    if (!isHouseNode) {
-        for (int i = 0; i < Node::allNodes.size(); i++)
-        {
-            if ((node.getX() == Node::allNodes[i].getX() || 
-                (node.getX() <= Node::allNodes[i].getX() + 10 &&
-                node.getX() >= Node::allNodes[i].getX() - 10)) && 
-                (node.getY() == Node::allNodes[i].getY() || 
-                (node.getY() <= Node::allNodes[i].getY() + 10 &&
-                node.getY() >= Node::allNodes[i].getY() - 10))) {
-                    foundx = true;
-                    break;
-            }
-        }
-    }
-    else 
+    for (int i = 0; i < allNodes->size(); i++)
     {
-        for (int i = 0; i < Node::allNodes.size(); i++)
-        {
-            if ((node.getX() == Node::allNodes[i].getX() || 
-                (node.getX() <= Node::allNodes[i].getX() + 5 &&
-                node.getX() >= Node::allNodes[i].getX() - 5)) && 
-                (node.getY() == Node::allNodes[i].getY() || 
-                (node.getY() <= Node::allNodes[i].getY() + 5 &&
-                node.getY() >= Node::allNodes[i].getY() - 5))) {
-                    foundx = true;
-                    break;
-            }
+        if ((node.getX() == allNodes->at(i).getX() || 
+            (node.getX() <= allNodes->at(i).getX() + 10 &&
+            node.getX() >= allNodes->at(i).getX() - 10)) && 
+            (node.getY() == allNodes->at(i).getY() || 
+            (node.getY() <= allNodes->at(i).getY() + 10 &&
+            node.getY() >= allNodes->at(i).getY() - 10))) {
+                foundx = true;
+                break;
         }
     }
-    
     return foundx;
 }
 
 Node Node::getSpecificNode(Node node)
 {
-    for (int i = 0; i < Node::allNodes.size(); i++) {
-        if ((node.getX() == Node::allNodes[i].getX() || 
-            (node.getX() <= Node::allNodes[i].getX() + 20 &&
-            node.getX() >= Node::allNodes[i].getX() - 20)) && 
-            (node.getY() == Node::allNodes[i].getY() || 
-            (node.getY() <= Node::allNodes[i].getY() + 20 &&
-            node.getY() >= Node::allNodes[i].getY() - 20))) {
-                return Node::allNodes[i];
+    for (int i = 0; i < Node::allNodes->size(); i++) {
+        if ((node.getX() == Node::allNodes->at(i).getX() || 
+            (node.getX() <= Node::allNodes->at(i).getX() + 20 &&
+            node.getX() >= Node::allNodes->at(i).getX() - 20)) && 
+            (node.getY() == Node::allNodes->at(i).getY() || 
+            (node.getY() <= Node::allNodes->at(i).getY() + 20 &&
+            node.getY() >= Node::allNodes->at(i).getY() - 20))) {
+                return Node::allNodes->at(i);
         }
     }
     return Node();

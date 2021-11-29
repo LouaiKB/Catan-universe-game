@@ -13,15 +13,16 @@ public:
     ~Node();
     
     // All static methods
-    static std::vector<Node> allNodes;
-    static std::vector<Node> occupiedNodes;
+    static std::vector<Node> *allNodes;
+    static std::vector<Node> *occupiedNodes;
     // static std::vector<Node> clickedNode;
     static Node *clickedNode;
     static bool isClicked;
+    static bool playerOn;
     static void setClickedNode(Node);
     static void setOccupiedNodes(Node);
     static void setAllNodes(Node);
-    static bool checkIfNodeIsOccupied(Node, bool houseNode=false);
+    static bool checkIfNodeIsOccupied(Node, std::vector<Node>*);
     static Node getSpecificNode(Node);    
 
     // class methods
@@ -44,9 +45,10 @@ class Tuile
 public:
     Tuile();
     ~Tuile();
+    static std::vector<int> getTilesOfANode(Node, std::array<Tuile, 28>);
     int getNumberOfTuile();
     int getRessourceOfTuile();
-    std::array<Node, 6> getNodesCoordinates();
+    std::vector<Node>* getNodesCoordinates();
     void setNumberOfTuile(int);
     void setRessourceOfTuile(int);
     void setNodesCoordinates(int, int);
@@ -54,7 +56,7 @@ public:
 private:
     int numberOfTuile;
     int ressource;
-    std::array<Node, 6> nodes;
+    std::vector<Node> *nodes = new std::vector<Node>(6);
     int edges[6];
 };
 

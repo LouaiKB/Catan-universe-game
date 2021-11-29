@@ -15,13 +15,14 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
     // this Node is occupied
     node.setOccupied();
     node.setAdjacentNodes();
-    if (Node::checkIfNodeIsOccupied(node, true)){
+    if (Node::checkIfNodeIsOccupied(node, Node::allNodes)){
         Node::setClickedNode(node);
-        // Node::setOccupiedHouseNodes({(int)event->x, (int)event->y});
         Node::isClicked = true;
     }
-    // delete[] Node::clickedNode;
     queue_draw();
+    if (Node::playerOn) {
+        add_events(Gdk::BUTTON_PRESS_MASK);
+    }
 }
 
 bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) 
@@ -38,7 +39,7 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     this->drawTokens(cr);
 
     // Draw circles
-        this->drawNodeCircles(cr);
+    this->drawNodeCircles(cr);
 
     // Draw house onclick
     if (Node::isClicked) {
@@ -47,6 +48,7 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         // Node::isClicked ;
     // Node::isClicked = false;
     }
+    queue_draw();
 
     return true;
 }
@@ -94,25 +96,25 @@ void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
 void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
 {   
     // Initialize the static vector of nodes  
-    Node::allNodes = {Node()};
+    *Node::allNodes = {Node()};
 
     // loop through each tuile object
     for (int i = 0; i < this->tuilesVector.size(); i++)
     {
         // we will get all the nodes of each tuile
-        std::array<Node, 6> nodes = tuilesVector[i].getNodesCoordinates();
+        std::vector<Node> *nodes = tuilesVector[i].getNodesCoordinates();
         
         // boolean variable to check if the node is occupied or not
         // std::vector<int> currentNode;
         
         // loop through each node and draw a cricle
-        for (int nodeindex = 0; nodeindex < nodes.size(); nodeindex++)
+        for (int nodeindex = 0; nodeindex < nodes->size(); nodeindex++)
         {
             // currentNode = {nodes[nodeindex].getX(), nodes[nodeindex].getY()};
 
-            Node currentNode = nodes[nodeindex];
+            Node currentNode = nodes->at(nodeindex);
 
-            if (!Node::checkIfNodeIsOccupied(currentNode))
+            if (!Node::checkIfNodeIsOccupied(currentNode, Node::allNodes))
             {
                 cr->set_line_width(1.0);
                 cr->save();
@@ -126,6 +128,7 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
             }
         }
     }
+    // add_events(Gdk::BUTTON_PRESS_MASK);
     // queue_draw();
 }
 
@@ -176,6 +179,9 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
         }
     }
     queue_draw();
+    Node node = Node::clickedNode[0];
+    Tuile::getTilesOfANode(node, tuilesVector);
+    Node::playerOn = false;
 }
 
 std::vector<std::vector<int>> Drawing::shuffleTokensPositions()
@@ -239,9 +245,9 @@ CatanMainWindow::CatanMainWindow() {
 } 
 
 bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
-    std::cout << "x= " << button_event-> x << std::endl;
-    std::cout << "y= " << button_event-> y << std::endl;
-    std::cout << "-------------------------------" << std::endl;
+    // std::cout << "x= " << button_event-> x << std::endl;
+    // std::cout << "y= " << button_event-> y << std::endl;
+    // std::cout << "-------------------------------" << std::endl;
 }
 
 CatanMainWindow::~CatanMainWindow() {}
