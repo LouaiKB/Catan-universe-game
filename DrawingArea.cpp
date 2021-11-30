@@ -227,7 +227,7 @@ CatanMainWindow::CatanMainWindow() {
 
 
     // configure right side
-    right_label.set_text("Dice value = " + std::to_string(this->getDiceValue()));
+    right_label.set_text("Dice value = 0");
     startDice.add_label("Throw dice");
     startDice.signal_clicked().connect(sigc::mem_fun(*this, &CatanMainWindow::onClickStartDice));
     rightUpBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -269,6 +269,7 @@ void CatanMainWindow::onClickStartDice()
     int random = GAME.startDice();
     this->setDiceValue(random);
     std::cout << "button clicked random value: " << this->getDiceValue() << std::endl;
+    this->right_label.set_text("Dice value = " + std::to_string(this->getDiceValue()));
 }
 
 int CatanMainWindow::getDiceValue()
