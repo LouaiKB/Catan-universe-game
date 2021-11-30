@@ -9,7 +9,7 @@
 #include <random>
 #include <string>
 #include "CatanElements.h"
-
+#include "GamePlay.h"
 
 class Drawing : public Gtk::DrawingArea
 {
@@ -53,7 +53,6 @@ private:
     };
     std::vector<int> thiefTokenPositions = {600, 425};
     std::vector<std::vector<int>> randTokensPositions = shuffleTokensPositions();
-    // std::array<Tuile, 28> tuilesVector;
     std::vector<Tuile> *tuilesVector = new std::vector<Tuile>(28);
 };
 
@@ -63,6 +62,9 @@ public:
     CatanMainWindow();
     virtual ~CatanMainWindow();
     bool onClicked(GdkEventButton* button_event);
+    void onClickStartDice();
+    void setDiceValue(int);
+    int getDiceValue();
 
 private:
     Drawing drawing;
@@ -72,6 +74,8 @@ private:
     Gtk::Label left_label, right_label;
     Gtk::Box* rightUpBox = nullptr;
     Gtk::EventBox eventBox;
+    GamePlay GAME;
+    int diceValue;
 };
 
 class Coordinates

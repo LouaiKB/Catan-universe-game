@@ -5,6 +5,7 @@
 class Player
 {
 public:
+    Player();
     Player(int);
     ~Player();
     void setCorrespondedTiles(Node, std::vector<Tuile>*);

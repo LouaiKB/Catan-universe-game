@@ -200,6 +200,8 @@ CatanMainWindow::CatanMainWindow() {
     // set title
     set_title("Catan Universe Game");
 
+    this->diceValue = 0;
+
     // resize main window
     resize(1800, 900);
     set_border_width(20);
@@ -225,8 +227,9 @@ CatanMainWindow::CatanMainWindow() {
 
 
     // configure right side
-    right_label.set_text("Dice value = ");
+    right_label.set_text("Dice value = " + std::to_string(this->getDiceValue()));
     startDice.add_label("Throw dice");
+    startDice.signal_clicked().connect(sigc::mem_fun(*this, &CatanMainWindow::onClickStartDice));
     rightUpBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     rightUpBox->set_spacing(10);
     rightUpBox->pack_start(right_label);
@@ -241,10 +244,14 @@ CatanMainWindow::CatanMainWindow() {
     mainGrid.set_halign(Gtk::ALIGN_CENTER);
     mainGrid.set_valign(Gtk::ALIGN_CENTER);
 
+    queue_draw();
+
     // add grid
     add(mainGrid);
     show_all_children();
 } 
+
+CatanMainWindow::~CatanMainWindow() {}
 
 bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
     // std::cout << "x= " << button_event-> x << std::endl;
@@ -252,7 +259,23 @@ bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
     // std::cout << "-------------------------------" << std::endl;
 }
 
-CatanMainWindow::~CatanMainWindow() {}
+void CatanMainWindow::setDiceValue(int a)
+{
+    this->diceValue = a;
+}
+
+void CatanMainWindow::onClickStartDice()
+{
+    int random = GAME.startDice();
+    this->setDiceValue(random);
+    std::cout << "button clicked random value: " << this->getDiceValue() << std::endl;
+}
+
+int CatanMainWindow::getDiceValue()
+{
+    return this->diceValue;
+}
+
 
 
 Coordinates::Coordinates() {}
