@@ -39,33 +39,6 @@ void Tuile::setNodesCoordinates(int x, int y)
     this->nodes->at(5) = Node(x - 20, y + 93);
 }
 
-std::vector<int> Tuile::getTilesOfANode(Node node, std::vector<Tuile>* allTiles)
-{
-    std::vector<int> numberOfCorrespondedTiles;
-    
-    // parsing all the Tiles
-    for (int i = 0; i < allTiles->size(); i++) {
-        // know we will parse each node of the tile 
-        std::vector<Node>* nodes = allTiles->at(i).getNodesCoordinates();
-        if (Node::checkIfNodeIsOccupied(node, nodes)) {
-            numberOfCorrespondedTiles.push_back(allTiles->at(i).getNumberOfTuile());
-        }
-    }
-    return numberOfCorrespondedTiles;
-}
-
-std::vector<int> Tuile::getRessourceOfSpecificTiles(Node node, std::vector<Tuile>* allTiles)
-{
-    std::vector<int> ressourcesOfCorrespondedTiles;
-    for (int i = 0; i < allTiles->size(); i++) {
-        std::vector<Node>* nodes = allTiles->at(i).getNodesCoordinates();
-        if (Node::checkIfNodeIsOccupied(node, nodes)) {
-            ressourcesOfCorrespondedTiles.push_back(allTiles->at(i).getRessourceOfTuile());
-        }
-    }
-    return ressourcesOfCorrespondedTiles;
-}
-
 Node::Node() : x(0), y(0) {
     this->occupied = false;
 }

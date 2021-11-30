@@ -15,7 +15,6 @@ public:
     // All static methods
     static std::vector<Node> *allNodes;
     static std::vector<Node> *occupiedNodes;
-    // static std::vector<Node> clickedNode;
     static Node *clickedNode;
     static bool isClicked;
     static bool playerOn;
@@ -45,8 +44,6 @@ class Tuile
 public:
     Tuile();
     ~Tuile();
-    static std::vector<int> getTilesOfANode(Node, std::vector<Tuile>*);
-    static std::vector<int> getRessourceOfSpecificTiles(Node, std::vector<Tuile>*);
     int getNumberOfTuile();
     int getRessourceOfTuile();
     std::vector<Node>* getNodesCoordinates();
