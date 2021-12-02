@@ -1,7 +1,67 @@
 #include "Player.h"
 
+GamePlay::GamePlay() {}
+GamePlay::~GamePlay() {}
+
+// void GamePlay::firstSettlmentPlay() {}
+// void GamePlay::secondSettlmentPlay() {}
+// void GamePlay::loopPlay() {}
+
+int GamePlay::startDice() 
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distr(2, 12);
+    return distr(gen);
+}
+
+void GamePlay::enableBuilding()
+{
+    Node::playerOn = true;
+}
+
+void GamePlay::enableBuildingRoute()
+{
+    Node::buildRoute = true;
+}
+
 Player::Player(int num) : number(num) {
     this->score = 0;
+    switch (this->number)
+    {
+    case 1:
+        this->settlment = "Tokens/green_house.png";
+        this->city = "Tokens/green_city";
+        break;
+    
+    case 2:
+        this->settlment = "Tokens/blue_house.png";
+        this->city = "Tokens/blue_city.png";
+        break;
+    
+    case 3:
+        this->settlment = "Tokens/red_house.png";
+        this->city = "Tokens/red_city.png";
+        break;
+    
+    case 4:
+        this->settlment = "Tokens/orange_house.png";
+        this->city = "Tokens/orange_city.png";
+        break;
+    
+    case 5:
+        this->settlment = "Tokens/brown_house.png";
+        this->city = "Tokens/brown_city.png";
+        break;
+
+    case 6:
+        this->settlment = "Tokens/white_house.png";
+        this->city = "Tokens/white_city.png";
+        break;
+    
+    default:
+        break;
+    }       
 }
 
 Player::~Player() {}
@@ -91,7 +151,14 @@ bool Player::buildSettlement()
             break;
         }
     }
-    return (numberOfBriks != 0 && numberOfLumbers != 0 && numberOfGrain != 0 && numberOfWool != 0);
+    if (numberOfBriks != 0 && numberOfLumbers != 0 
+        && numberOfGrain != 0 && numberOfWool != 0) {
+            this->settlments->push_back(this->settlment);
+            return true;
+    } else {
+        return false;
+    }
+
 }
 
 bool Player::buildCity()
@@ -104,6 +171,11 @@ bool Player::buildCity()
         if (ressources[i] == 2)
             numberOfOre += 1;
     }
-    return (numberOfGrain >= 2 && numberOfOre >= 3);
+    if (numberOfGrain >= 2 && numberOfOre >= 3) {
+        this->cities->push_back(this->city);
+        return true;
+    } else {
+        return false;
+    }
 }
 

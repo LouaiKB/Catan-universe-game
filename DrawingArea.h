@@ -3,13 +3,7 @@
 #include <gtkmm.h>
 #include <gtkmm/window.h>
 #include <gtkmm/grid.h>
-#include <iostream>
-#include <array>
-#include <algorithm>
-#include <random>
-#include <string>
-#include "CatanElements.h"
-#include "GamePlay.h"
+#include "Player.h"
 
 class Drawing : public Gtk::DrawingArea
 {
@@ -26,9 +20,10 @@ protected:
     void drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr);
     void setTuiles(int, std::string);
     void drawHouses(const Cairo::RefPtr<Cairo::Context> &cr);
+    void drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr);
 
 private:
-    Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage, houseImage;
+    Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage, houseImage, houseImage1;
     std::vector<std::string> tokensFileName = {
         "Tokens/2.png", "Tokens/2_.png", "Tokens/3.png", "Tokens/3_.png", "Tokens/3__.png",
         "Tokens/4.png", "Tokens/4_.png", "Tokens/4__.png", "Tokens/5.png", "Tokens/5_.png",
@@ -64,13 +59,14 @@ public:
     void onClickStartDice();
     void setDiceValue(int);
     void enableBuild();
+    void enableBuildRoutes();
     int getDiceValue();
 
 private:
     Drawing drawing;
     Gtk::Grid mainGrid;
     Gtk::Box imageBox;
-    Gtk::Button startDice, build;
+    Gtk::Button startDice, build, buildRoute;
     Gtk::Label left_label, right_label;
     Gtk::Box* rightUpBox = nullptr;
     Gtk::Box* leftUpBox = nullptr;

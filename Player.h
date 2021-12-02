@@ -1,6 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
-#include "DrawingArea.h"
+#include "CatanElements.h"
 
 class Player
 {
@@ -22,8 +22,27 @@ private:
     // 3- Mouton, 4- Blé, 5-Bois.
     std::vector<int> ressources;
     std::vector<int> tiles;
+    std::string settlment;
+    std::string city;
+    std::vector<std::string> *settlments = new std::vector<std::string>();
+    std::vector<std::string> *cities = new std::vector<std::string>();
     int number;
     int score;
 };
 
+class GamePlay
+{
+public:
+    GamePlay();
+    ~GamePlay();
+    // void firstSettlmentPlay();
+    // void secondSettlmentPlay();
+    // void loopPlay();
+    int startDice();
+    void enableBuilding();
+    void enableBuildingRoute();
+
+private:
+    std::vector<Player> players;
+};
 #endif

@@ -38,7 +38,29 @@ void Tuile::setNodesCoordinates(int x, int y)
     this->nodes->at(4) = Node(x + 65, y + 93);
     this->nodes->at(5) = Node(x - 20, y + 93);
 }
-    
+
+void Tuile::setEdgesCoordinates()
+{
+    this->edges->at(0) = Tuile::getMiddleBetweenTwoNodes(nodes->at(0), nodes->at(1));
+    this->edges->at(1) = Tuile::getMiddleBetweenTwoNodes(nodes->at(1), nodes->at(2));
+    this->edges->at(2) = Tuile::getMiddleBetweenTwoNodes(nodes->at(2), nodes->at(3));
+    this->edges->at(3) = Tuile::getMiddleBetweenTwoNodes(nodes->at(3), nodes->at(4));
+    this->edges->at(4) = Tuile::getMiddleBetweenTwoNodes(nodes->at(4), nodes->at(5));
+    this->edges->at(5) = Tuile::getMiddleBetweenTwoNodes(nodes->at(5), nodes->at(0));
+}
+
+Node Tuile::getMiddleBetweenTwoNodes(Node a, Node b)
+{
+    int middleX = (a.getX() + b.getX()) / 2;
+    int middleY = (a.getY() + b.getY()) / 2;
+    return Node(middleX, middleY);
+}
+
+std::vector<Node>* Tuile::getEdgesCoordinates()
+{
+    return this->edges;
+}
+
 Node::Node() : x(0), y(0) {
     this->occupied = false;
 }
@@ -86,9 +108,11 @@ std::vector<Node> Node::getAdjacentNodes() {
 std::vector<Node> *Node::occupiedNodes = new std::vector<Node>();
 std::vector<Node> *Node::allNodes = new std::vector<Node>();
 
-Node * Node::clickedNode = new Node[1];
+Node * Node::clickedNode = new Node[2];
 bool Node::isClicked = false;
 bool Node::playerOn = true;
+bool Node::buildRoute = false;
+
 
 void Node::setAllNodes(Node node)
 {
@@ -138,4 +162,9 @@ Node Node::getSpecificNode(Node node)
         }
     }
     return Node();
+}
+
+std::vector<Node> Node::getNodesOfAnEdge(Node edge)
+{
+    
 }
