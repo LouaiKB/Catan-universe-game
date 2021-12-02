@@ -37,7 +37,6 @@ private:
         "Tokens/10.png", "Tokens/10_.png", "Tokens/10__.png", "Tokens/11.png", "Tokens/11_.png",
         "Tokens/11__.png", "Tokens/12.png", "Tokens/12_.png", "Tokens/Brigand.png"
     };
-
     /*
      * tokenPositions is a vector that contains the x position, the y position and the type of the ressource
      * {x position, y position, type of the ressource}
@@ -64,15 +63,17 @@ public:
     bool onClicked(GdkEventButton* button_event);
     void onClickStartDice();
     void setDiceValue(int);
+    void enableBuild();
     int getDiceValue();
 
 private:
     Drawing drawing;
     Gtk::Grid mainGrid;
-    Gtk::Box imageBox, leftUpBox;
-    Gtk::Button startDice;
+    Gtk::Box imageBox;
+    Gtk::Button startDice, build;
     Gtk::Label left_label, right_label;
     Gtk::Box* rightUpBox = nullptr;
+    Gtk::Box* leftUpBox = nullptr;
     Gtk::EventBox eventBox;
     GamePlay GAME;
     int diceValue;

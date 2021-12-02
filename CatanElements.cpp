@@ -38,7 +38,7 @@ void Tuile::setNodesCoordinates(int x, int y)
     this->nodes->at(4) = Node(x + 65, y + 93);
     this->nodes->at(5) = Node(x - 20, y + 93);
 }
-
+    
 Node::Node() : x(0), y(0) {
     this->occupied = false;
 }

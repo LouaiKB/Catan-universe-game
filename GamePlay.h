@@ -11,6 +11,7 @@ public:
     // void secondSettlmentPlay();
     // void loopPlay();
     int startDice();
+    void enableBuilding();
 
 // private:
 //     Player firstPlayer, secondPlayer, thirdPlayer;

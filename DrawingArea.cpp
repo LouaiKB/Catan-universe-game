@@ -12,6 +12,7 @@ Drawing::~Drawing() {}
 bool Drawing::on_button_press_event(GdkEventButton* event)
 {
     if (Node::playerOn) {
+        std::cout << "ENTERING IN SCOPE " << Node::playerOn << std::endl; 
         Node node((int)event->x, (int)event->y);
         // this Node is occupied
         node.setOccupied();
@@ -22,6 +23,11 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
         }
         Node::playerOn = false;
         queue_draw();
+    } else {
+        CatanMainWindow win;
+        Gtk::MessageDialog d(win, "Press on the BUILD button to enable building",
+            false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+        d.run();
     }
 }
 
@@ -42,12 +48,9 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     this->drawNodeCircles(cr);
 
     // Draw house onclick
-    // if (Node::isClicked) {
-        // std::cout << "DRAW HOUSE INSIDE SCOPE" << std::endl;
     this->drawHouses(cr);
-        // Node::isClicked ;
-    // Node::isClicked = false;
-    // }
+
+    // update the widget
     queue_draw();
 
     return true;
@@ -128,8 +131,6 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
             }
         }
     }
-    // add_events(Gdk::BUTTON_PRESS_MASK);
-    // queue_draw();
 }
 
 void Drawing::setTuiles(int index, std::string img)
@@ -149,7 +150,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
     if (Node::clickedNode[0].getX() != 0) {
         // get the house
         houseImage = Gdk::Pixbuf::create_from_file("Tokens/green_house.png");
-        houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.6, (houseImage->get_width()) * 0.6,
+        houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
                                             Gdk::INTERP_BILINEAR);
         cr->save();
         double x_pos = Node::clickedNode[0].getX() - 20;
@@ -182,7 +183,6 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
         queue_draw();
         Node node = Node::clickedNode[0];
         // std::vector<int> a = Tuile::getTilesOfANode(node, tuilesVector);
-        Node::playerOn = false;
     }
 }
 
@@ -214,6 +214,7 @@ CatanMainWindow::CatanMainWindow() {
         sigc::mem_fun(*this, &CatanMainWindow::onClicked)
     );
 
+    imageBox.set_spacing(5);
     imageBox.pack_start(eventBox, Gtk::PACK_EXPAND_WIDGET);
     imageBox.set_size_request(1000, 900);
     imageBox.set_halign(Gtk::ALIGN_CENTER);
@@ -221,9 +222,16 @@ CatanMainWindow::CatanMainWindow() {
 
     // configure left side
     left_label.set_text("the turn is up to the user\nScore = ");
-    leftUpBox.pack_start(left_label);
-    leftUpBox.set_halign(Gtk::ALIGN_START);
-    leftUpBox.set_valign(Gtk::ALIGN_START);
+    leftUpBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    leftUpBox->set_spacing(10);
+    leftUpBox->pack_start(left_label);
+    build.add_label("Build");
+    build.signal_clicked().connect(
+        sigc::mem_fun(*this, &CatanMainWindow::enableBuild)
+    );
+    leftUpBox->pack_start(build);
+    leftUpBox->set_halign(Gtk::ALIGN_START);
+    leftUpBox->set_valign(Gtk::ALIGN_START);
 
 
     // configure right side
@@ -239,7 +247,7 @@ CatanMainWindow::CatanMainWindow() {
 
     // attach into grid and center the main grid
     mainGrid.attach(imageBox, 10, 2, 3, 1);
-    mainGrid.attach(leftUpBox, 0, 0, 1, 1);
+    mainGrid.attach(*leftUpBox, 0, 0, 1, 1);
     mainGrid.attach(*rightUpBox, 20, 0, 1, 1);
     mainGrid.set_halign(Gtk::ALIGN_CENTER);
     mainGrid.set_valign(Gtk::ALIGN_CENTER);
@@ -268,7 +276,6 @@ void CatanMainWindow::onClickStartDice()
 {
     int random = GAME.startDice();
     this->setDiceValue(random);
-    std::cout << "button clicked random value: " << this->getDiceValue() << std::endl;
     this->right_label.set_text("Dice value = " + std::to_string(this->getDiceValue()));
 }
 
@@ -277,7 +284,13 @@ int CatanMainWindow::getDiceValue()
     return this->diceValue;
 }
 
-
+void CatanMainWindow::enableBuild()
+{
+    GAME.enableBuilding();
+    Gtk::MessageDialog d(*this, "Press on a green point to build",
+    false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
+    d.run();
+}
 
 Coordinates::Coordinates() {}
 
