@@ -3,7 +3,6 @@
 Drawing::Drawing()
 {
     mainBoardImage = Gdk::Pixbuf::create_from_file("images/Board.png");
-    // Node::isClicked = false;
     add_events(Gdk::BUTTON_PRESS_MASK);
 }
 
@@ -11,35 +10,21 @@ Drawing::~Drawing() {}
 
 bool Drawing::on_button_press_event(GdkEventButton* event)
 {
-    // if (Node::buildRoute) {
-    //     bool firstClickedNode = false, secondClickedNode = false;
-    //     if (!firstClickedNode && !secondClickedNode) {
-    //         int x1 = event->x;
-    //         int y1 = event->y;
-    //         Node::setClickedNode(Node(x1, y1));
-    //         firstClickedNode = true;
-    //         Node::buildRoute = false;
-    //         std::cout << "FIRST IFFF" << std::endl;
-    //     }
-    //     if (firstClickedNode && !secondClickedNode && 
-    //         (int)event->x != Node::clickedNode[0].getX() &&
-    //         (int)event->y != Node::clickedNode[0].getY()) {
-    //             int x2 = event->x;
-    //             int y2 = event->y;
-    //             Node::clickedNode[1] = Node(x2, y2);
-    //             secondClickedNode = true;
-    //             Node::buildRoute = false;
-    //             std::cout << "SECOND IFFFFF" << std::endl;
-    //     }
-    //     Node::playerOn = false;
-    // }
+    if (Node::buildRoute) {
+        Node node((int)event->x, (int)event->y);
+        Edge edge = Edge::getSpecificEdge(node, Edge::allEdges);
+        if (Edge::checkIfNodeExists(edge, Edge::allEdges)) {
+            Edge::setClickedNode(edge);
+            Node::buildRoute = false;
+        }
+        queue_draw();
+    }
 
     if (Node::playerOn) {
         Node node((int)event->x, (int)event->y);
-        // this Node is occupied
         node.setOccupied();
         node.setAdjacentNodes();
-        if (Node::checkIfNodeIsOccupied(node, Node::allNodes)){
+        if (Node::checkIfNodeExists(node, Node::allNodes)) {
             Node::setClickedNode(node);
             Node::isClicked = true;
             Node::playerOn = false;
@@ -72,7 +57,7 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // Draw house onclick
     this->drawHouses(cr);
 
-    // this->drawRoutes(cr);
+    this->drawRoutes(cr);
 
     // update the widget
     queue_draw();
@@ -124,13 +109,14 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
 {   
     // Initialize the static vector of nodes  
     *Node::allNodes = {Node()};
+    *Edge::allEdges = {Edge()};
 
     // loop through each tuile object
     for (int i = 0; i < this->tuilesVector->size(); i++)
     {
         // we will get all the nodes of each tuile
         std::vector<Node> *nodes = tuilesVector->at(i).getNodesCoordinates();
-        
+
         // loop through each node and draw a cricle
         for (int nodeindex = 0; nodeindex < nodes->size(); nodeindex++)
         {
@@ -138,7 +124,7 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
 
             Node currentNode = nodes->at(nodeindex);
 
-            if (!Node::checkIfNodeIsOccupied(currentNode, Node::allNodes))
+            if (!Node::checkIfNodeExists(currentNode, Node::allNodes))
             {
                 cr->set_line_width(1.0);
                 cr->save();
@@ -152,26 +138,26 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
             }
         }
 
-        std::vector<Node> *edges = tuilesVector->at(i).getEdgesCoordinates();
+        std::vector<Edge> *edges = tuilesVector->at(i).getEdgesCoordinates();
 
         // loop through each edge node and draw a cricle
         for (int nodeindex = 0; nodeindex < edges->size(); nodeindex++)
         {
             // currentNode = {nodes[nodeindex].getX(), nodes[nodeindex].getY()};
 
-            Node currentNode = edges->at(nodeindex);
+            Edge currentEdge = edges->at(nodeindex);
 
-            if (!Node::checkIfNodeIsOccupied(currentNode, Node::allNodes))
+            if (!Edge::checkIfNodeExists(currentEdge, Edge::allEdges))
             {
                 cr->set_line_width(1.0);
                 cr->save();
-                cr->arc(currentNode.getX(), currentNode.getY(), 5, 0.0, 2 * M_PI);
+                cr->arc(currentEdge.getX(), currentEdge.getY(), 5, 0.0, 2 * M_PI);
                 cr->close_path();
                 cr->set_source_rgba(0.95, 0.95, 0.95, 0.5);
                 cr->fill_preserve();
                 cr->restore();
                 cr->stroke();
-                Node::setAllNodes(currentNode);
+                Edge::setAllEdges(currentEdge);
             }
         }
     }
@@ -232,11 +218,13 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    if (Node::clickedNode[0].getX() != 0 && Node::clickedNode[1].getX() != 0) {
-        cr->set_line_width(2);
+    if (Edge::clickedEdge[0].getX() != 0) {
+        Edge edge = Edge::clickedEdge[0];
+        std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
+        cr->set_line_width(4);
         cr->set_source_rgb(0.0, 0.8, 0.0);
-        cr->move_to(Node::clickedNode[0].getX(), Node::clickedNode[0].getY());
-        cr->line_to(Node::clickedNode[1].getX(), Node::clickedNode[1].getY());
+        cr->move_to(nodesOfTheEdge[0].getX(), nodesOfTheEdge[0].getY());
+        cr->line_to(nodesOfTheEdge[1].getX(), nodesOfTheEdge[1].getY());
         cr->stroke();
     }
 }
@@ -355,7 +343,7 @@ void CatanMainWindow::enableBuild()
 void CatanMainWindow::enableBuildRoutes()
 {
     GAME.enableBuildingRoute();
-    Gtk::MessageDialog d(*this, "Click on the two points to build a route",
-    false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
-    d.run();
+    // Gtk::MessageDialog d(*this, "Click on the two points to build a route",
+    // false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
+    // d.run();
 }

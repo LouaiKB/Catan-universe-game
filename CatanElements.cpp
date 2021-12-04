@@ -49,14 +49,22 @@ void Tuile::setEdgesCoordinates()
     this->edges->at(5) = Tuile::getMiddleBetweenTwoNodes(nodes->at(5), nodes->at(0));
 }
 
-Node Tuile::getMiddleBetweenTwoNodes(Node a, Node b)
+Edge Tuile::getMiddleBetweenTwoNodes(Node a, Node b)
 {
     int middleX = (a.getX() + b.getX()) / 2;
     int middleY = (a.getY() + b.getY()) / 2;
-    return Node(middleX, middleY);
+    int xRadius = middleX - a.getX();
+    int yRadius;
+    
+    if (middleY == a.getY() || (middleY <= a.getY() + 5 && middleY >=  a.getY() - 5)) 
+        yRadius = a.getY();
+    else
+        yRadius = middleY - a.getY();
+    
+    return Edge(middleX, middleY, xRadius, yRadius);
 }
 
-std::vector<Node>* Tuile::getEdgesCoordinates()
+std::vector<Edge>* Tuile::getEdgesCoordinates()
 {
     return this->edges;
 }
@@ -82,7 +90,7 @@ bool Node::isOccupied() {
 void Node::setAdjacentNodes() {
     
     // setting the side Node 
-    if (Node::checkIfNodeIsOccupied(Node(x - 90, y), Node::allNodes)) {
+    if (Node::checkIfNodeExists(Node(x - 90, y), Node::allNodes)) {
         adjacentNodes.push_back(Node(x - 90, y));
         adjacentNodes.push_back(Node(x + 50, y - 70));
         adjacentNodes.push_back(Node(x + 50, y + 70));
@@ -108,7 +116,7 @@ std::vector<Node> Node::getAdjacentNodes() {
 std::vector<Node> *Node::occupiedNodes = new std::vector<Node>();
 std::vector<Node> *Node::allNodes = new std::vector<Node>();
 
-Node * Node::clickedNode = new Node[2];
+Node * Node::clickedNode = new Node[1];
 bool Node::isClicked = false;
 bool Node::playerOn = true;
 bool Node::buildRoute = false;
@@ -131,9 +139,9 @@ void Node::setOccupiedNodes(Node node)
     Node::occupiedNodes->push_back(node);
 }
 
-bool Node::checkIfNodeIsOccupied(Node node, std::vector<Node> *allNodes)
+bool Node::checkIfNodeExists(Node node, std::vector<Node> *allNodes)
 {
-    bool foundx = false;
+    bool found = false;
     for (int i = 0; i < allNodes->size(); i++)
     {
         if ((node.getX() == allNodes->at(i).getX() || 
@@ -142,11 +150,11 @@ bool Node::checkIfNodeIsOccupied(Node node, std::vector<Node> *allNodes)
             (node.getY() == allNodes->at(i).getY() || 
             (node.getY() <= allNodes->at(i).getY() + 10 &&
             node.getY() >= allNodes->at(i).getY() - 10))) {
-                foundx = true;
+                found = true;
                 break;
         }
     }
-    return foundx;
+    return found;
 }
 
 Node Node::getSpecificNode(Node node)
@@ -164,7 +172,100 @@ Node Node::getSpecificNode(Node node)
     return Node();
 }
 
-std::vector<Node> Node::getNodesOfAnEdge(Node edge)
+std::vector<Node> Edge::getNodesOfAnEdge(Edge edge)
 {
+    std::vector<Node> nodesOfthisEdge;
+    int radiusX = edge.getRadiusX();
+    int radiusY = edge.getRadiusY();
+    int y1, y2;
+    int x1 = edge.getX() - radiusX;
+    int x2 = edge.getX() + radiusX;
+    if (radiusY == edge.getY()) {
+        y1 = edge.getY();
+        y2 = edge.getY();
+    } else {
+        y1 = edge.getY() - radiusY;
+        y2 = edge.getY() + radiusY;
+    }
+
+    Node firstNode = Node::getSpecificNode(Node(x1, y1));
+    Node secondNode = Node::getSpecificNode(Node(x2, y2));
     
+    nodesOfthisEdge.push_back(firstNode);
+    nodesOfthisEdge.push_back(secondNode);
+
+    return nodesOfthisEdge;
+}
+
+Edge::Edge(int a, int b, int midx, int midy) : Node(a, b)
+{
+    this->radiusX = midx;
+    this->radiusY = midy;
+}
+
+Edge::Edge() : Node() {
+    this->radiusX = 0;
+    this->radiusY = 0;
+}
+Edge::~Edge() {}
+
+std::vector<Edge>* Edge::allEdges = new std::vector<Edge>();
+
+void Edge::setAllEdges(Edge edge)
+{
+    Edge::allEdges->push_back(edge);
+}
+
+int Edge::getRadiusX() 
+{
+    return this->radiusX;
+}
+
+int Edge::getRadiusY()
+{
+    return this->radiusY;
+}
+
+bool Edge::checkIfNodeExists(Edge edge, std::vector<Edge>* allEdges)
+{
+    bool found = false;
+    for (int i = 0; i < allEdges->size(); i++)
+    {
+        if ((edge.getX() == allEdges->at(i).getX() || 
+            (edge.getX() <= allEdges->at(i).getX() + 10 &&
+            edge.getX() >= allEdges->at(i).getX() - 10)) && 
+            (edge.getY() == allEdges->at(i).getY() || 
+            (edge.getY() <= allEdges->at(i).getY() + 10 &&
+            edge.getY() >= allEdges->at(i).getY() - 10))) {
+                found = true;
+                break;
+        }
+    }
+    return found;
+}
+
+Edge Edge::getSpecificEdge(Node node, std::vector<Edge> *allEdges)
+{
+    for (int i = 0; i < allEdges->size(); i++) {
+        if ((node.getX() == allEdges->at(i).getX() || 
+            (node.getX() <= allEdges->at(i).getX() + 20 &&
+            node.getX() >= allEdges->at(i).getX() - 20)) && 
+            (node.getY() == allEdges->at(i).getY() || 
+            (node.getY() <= allEdges->at(i).getY() + 20 &&
+            node.getY() >= allEdges->at(i).getY() - 20))) {
+                std::cout << "CORRESPONDED EDGE FOUND!!\n" << "----------" << std::endl; 
+                return allEdges->at(i);
+        }
+    }
+    std::cout << "NOT FOUNDDDDDDD" << std::endl;
+    return Edge();
+}
+
+Edge *Edge::clickedEdge = new Edge[1];
+
+void Edge::setClickedNode(Edge edge)
+{
+    delete[] Edge::clickedEdge;
+    Edge::clickedEdge = new Edge[1];
+    Edge::clickedEdge[0] = edge;
 }

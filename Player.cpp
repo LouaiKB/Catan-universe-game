@@ -86,7 +86,7 @@ void Player::setCorrespondedTiles(Node node, std::vector<Tuile> *allTiles)
     for (int i = 0; i < allTiles->size(); i++) {
         // know we will parse each node of the tile 
         std::vector<Node>* nodes = allTiles->at(i).getNodesCoordinates();
-        if (Node::checkIfNodeIsOccupied(node, nodes)) {
+        if (Node::checkIfNodeExists(node, nodes)) {
             this->tiles.push_back(allTiles->at(i).getNumberOfTuile());
         }
     }
@@ -107,7 +107,7 @@ void Player::setRessources(Node node, std::vector<Tuile> *allTiles, int diceValu
         for (int i = 0; i < allTiles->size(); i++) {
             // know we will parse each node of the tile 
             std::vector<Node>* nodes = allTiles->at(i).getNodesCoordinates();
-            if (Node::checkIfNodeIsOccupied(node, nodes)) {
+            if (Node::checkIfNodeExists(node, nodes)) {
                 this->ressources.push_back(allTiles->at(i).getRessourceOfTuile());
             }
         }

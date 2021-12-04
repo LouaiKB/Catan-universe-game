@@ -23,9 +23,8 @@ public:
     static void setClickedNode(Node);
     static void setOccupiedNodes(Node);
     static void setAllNodes(Node);
-    static bool checkIfNodeIsOccupied(Node, std::vector<Node>*);
-    static Node getSpecificNode(Node);
-    static std::vector<Node> getNodesOfAnEdge(Node);    
+    static bool checkIfNodeExists(Node, std::vector<Node>*);
+    static Node getSpecificNode(Node);  
 
     // class methods
     void setOccupied();
@@ -42,6 +41,27 @@ private:
     std::vector<Node> adjacentNodes;
 };
 
+class Edge : public Node
+{
+public:
+    Edge();
+    Edge(int, int, int, int);
+    ~Edge();
+    static std::vector<Edge> *allEdges;
+    static bool checkIfNodeExists(Edge, std::vector<Edge>*);
+    static void setAllEdges(Edge);
+    static std::vector<Node> getNodesOfAnEdge(Edge);
+    static void setClickedNode(Edge);
+    static Edge getSpecificEdge(Node, std::vector<Edge>*);
+    static Edge* clickedEdge;
+    int getRadiusX();
+    int getRadiusY();
+
+private:
+    int radiusX;
+    int radiusY;
+};
+
 class Tuile
 {
 public:
@@ -50,19 +70,19 @@ public:
     int getNumberOfTuile();
     int getRessourceOfTuile();
     std::vector<Node>* getNodesCoordinates();
-    std::vector<Node>* getEdgesCoordinates();
+    std::vector<Edge>* getEdgesCoordinates();
     void setNumberOfTuile(int);
     void setRessourceOfTuile(int);
     void setNodesCoordinates(int, int);
     void setEdgesCoordinates();
-    static Node getMiddleBetweenTwoNodes(Node, Node);
+    static Edge getMiddleBetweenTwoNodes(Node, Node);
 
 private:
     int numberOfTuile;
     int ressource;
     std::vector<Node> *nodes = new std::vector<Node>(6);
     // int edges[6];
-    std::vector<Node> *edges = new std::vector<Node>(6);
+    std::vector<Edge> *edges = new std::vector<Edge>(6);
 };
 
 
