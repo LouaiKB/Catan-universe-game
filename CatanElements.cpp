@@ -253,7 +253,6 @@ Edge Edge::getSpecificEdge(Node node, std::vector<Edge> *allEdges)
             (node.getY() == allEdges->at(i).getY() || 
             (node.getY() <= allEdges->at(i).getY() + 20 &&
             node.getY() >= allEdges->at(i).getY() - 20))) {
-                std::cout << "CORRESPONDED EDGE FOUND!!\n" << "----------" << std::endl; 
                 return allEdges->at(i);
         }
     }

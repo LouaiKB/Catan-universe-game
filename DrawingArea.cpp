@@ -18,6 +18,7 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
             Node::buildRoute = false;
         }
         queue_draw();
+        return 1;
     }
 
     if (Node::playerOn) {
@@ -57,6 +58,7 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // Draw house onclick
     this->drawHouses(cr);
 
+    // Draw Routes
     this->drawRoutes(cr);
 
     // update the widget
@@ -120,8 +122,6 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
         // loop through each node and draw a cricle
         for (int nodeindex = 0; nodeindex < nodes->size(); nodeindex++)
         {
-            // currentNode = {nodes[nodeindex].getX(), nodes[nodeindex].getY()};
-
             Node currentNode = nodes->at(nodeindex);
 
             if (!Node::checkIfNodeExists(currentNode, Node::allNodes))
@@ -221,8 +221,8 @@ void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
-        cr->set_line_width(4);
-        cr->set_source_rgb(0.0, 0.8, 0.0);
+        cr->set_line_width(4.9);
+        cr->set_source_rgb(0.0, 0.5, 0.0);
         cr->move_to(nodesOfTheEdge[0].getX(), nodesOfTheEdge[0].getY());
         cr->line_to(nodesOfTheEdge[1].getX(), nodesOfTheEdge[1].getY());
         cr->stroke();
