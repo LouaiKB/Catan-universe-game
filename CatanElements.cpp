@@ -56,7 +56,7 @@ Edge Tuile::getMiddleBetweenTwoNodes(Node a, Node b)
     int xRadius = middleX - a.getX();
     int yRadius;
     
-    if (middleY == a.getY() || (middleY <= a.getY() + 5 && middleY >=  a.getY() - 5)) 
+    if (middleY == a.getY()) 
         yRadius = a.getY();
     else
         yRadius = middleY - a.getY();
@@ -256,7 +256,6 @@ Edge Edge::getSpecificEdge(Node node, std::vector<Edge> *allEdges)
                 return allEdges->at(i);
         }
     }
-    std::cout << "NOT FOUNDDDDDDD" << std::endl;
     return Edge();
 }
 
