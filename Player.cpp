@@ -25,6 +25,19 @@ void GamePlay::enableBuildingRoute()
     Node::buildRoute = true;
 }
 
+void GamePlay::setPlayers()
+{
+    this->players->push_back(Player(1));
+    this->players->push_back(Player(2));
+}
+
+std::vector<Player>* GamePlay::getPlayers()
+{
+    return this->players;
+}
+
+Player::Player() {}
+
 Player::Player(int num) : number(num) {
     this->score = 0;
     switch (this->number)
@@ -114,6 +127,11 @@ void Player::setRessources(Node node, std::vector<Tuile> *allTiles, int diceValu
     }
 }
 
+std::string Player::getSettlment()
+{
+    return this->settlment;
+}
+
 bool Player::buildRoute()
 {
     // nombre de briques et de bois
@@ -179,3 +197,14 @@ bool Player::buildCity()
     }
 }
 
+void Player::setAppropriateNode(Node node)
+{
+    this->hasNode = node;
+}
+
+std::vector<Player> *Player::allClickedNodes = new std::vector<Player>();
+
+Node Player::getAppropriateNode()
+{
+    return this->hasNode;
+}

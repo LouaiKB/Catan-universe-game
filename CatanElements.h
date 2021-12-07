@@ -38,7 +38,7 @@ private:
     int x;
     int y;
     bool occupied;
-    std::vector<Node> adjacentNodes;
+    std::vector<Node> adjacentNodes;   
 };
 
 class Edge : public Node

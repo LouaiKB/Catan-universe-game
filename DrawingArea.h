@@ -61,17 +61,27 @@ public:
     void enableBuild();
     void enableBuildRoutes();
     int getDiceValue();
+    void switchPlayer();
+    static int playerId;
+    // num players have the length of vector players
+    // static int numPlayers;
+    // void setAllPlayers();
+    // Player getCurrentPlayer(int);
+    std::vector<Player>* getPlayers();
 
 private:
     Drawing drawing;
     Gtk::Grid mainGrid;
     Gtk::Box imageBox;
-    Gtk::Button startDice, build, buildRoute;
+    Gtk::Button startDice, build, buildRoute, nextPlayer;
     Gtk::Label left_label, right_label;
     Gtk::Box* rightUpBox = nullptr;
     Gtk::Box* leftUpBox = nullptr;
     Gtk::EventBox eventBox;
-    GamePlay GAME;
+    GamePlay* GAME = nullptr;
+    // Player* currentPlayer = nullptr;
+    // Player currentPlayer;
+    std::vector<Player>* players = new std::vector<Player>(3);
     int diceValue;
 };
 

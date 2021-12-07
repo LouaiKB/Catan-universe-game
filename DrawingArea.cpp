@@ -62,7 +62,7 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     this->drawRoutes(cr);
 
     // update the widget
-    queue_draw();
+    // queue_draw();
 
     return true;
 }
@@ -178,39 +178,53 @@ void Drawing::setTuiles(int index, std::string img)
 // Initialize the draw house method
 void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 {
+    CatanMainWindow win;
+    std::vector<Player>* players = win.getPlayers();
     if (Node::clickedNode[0].getX() != 0) {
+        Player currentPlayer = players->at(CatanMainWindow::playerId);
+        currentPlayer.setAppropriateNode(Node::clickedNode[0]);
+        Player::allClickedNodes->push_back(currentPlayer);
         // get the house
-        houseImage = Gdk::Pixbuf::create_from_file("Tokens/green_house.png");
-        houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
-                                            Gdk::INTERP_BILINEAR);
-        cr->save();
-        double x_pos = Node::clickedNode[0].getX() - 20;
-        double y_pos = Node::clickedNode[0].getY() - 20;
+        // Player* currPlayer = nullptr;
+        // Player currPlayer = win.getCurrentPlayer(0);
+        for (int j = 0; j < Player::allClickedNodes->size(); j++) {
+            houseImage = Gdk::Pixbuf::create_from_file(Player::allClickedNodes->at(j).getSettlment());
+            houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
+                                                Gdk::INTERP_BILINEAR);
+            cr->save();
+            // double x_pos = Node::clickedNode[0].getX() - 20;
+            // double y_pos = Node::clickedNode[0].getY() - 20;
 
-        Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
-        cr->rectangle(0, 0, 1000, 900);
-        cr->fill();
-        cr->restore();
+            Node currentNode = Player::allClickedNodes->at(j).getAppropriateNode();
+            double x_pos = currentNode.getX() - 20;
+            double y_pos = currentNode.getY() - 20;
 
-        Node::clickedNode[0].setAdjacentNodes();
-        std::vector<Node> adjacentNodes = Node::clickedNode[0].getAdjacentNodes();
-        for (int i = 0; i < adjacentNodes.size(); i++) {
-            // search the node from all nodes
-            Node specifiNode = Node::getSpecificNode(adjacentNodes[i]);
+            Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
+            cr->rectangle(0, 0, 1000, 900);
+            cr->fill();
+            // cr->restore();
             
-            // if we find that node 
-            if (specifiNode.getX()) {
-                cr->set_line_width(1.0);
-                cr->save();
-                cr->arc(specifiNode.getX(), specifiNode.getY(), 7.2, 0.0, 2 * M_PI);
-                cr->close_path();
-                cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
-                cr->fill_preserve();
-                cr->restore();
-                cr->stroke();
+            // Node::clickedNode[0].setAdjacentNodes();
+            currentNode.setAdjacentNodes();
+            std::vector<Node> adjacentNodes = currentNode.getAdjacentNodes();
+            for (int i = 0; i < adjacentNodes.size(); i++) {
+                // search the node from all nodes
+                Node specifiNode = Node::getSpecificNode(adjacentNodes[i]);
+                
+                // if we find that node 
+                if (specifiNode.getX()) {
+                    cr->set_line_width(1.0);
+                    cr->save();
+                    cr->arc(specifiNode.getX(), specifiNode.getY(), 7.2, 0.0, 2 * M_PI);
+                    cr->close_path();
+                    cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
+                    cr->fill_preserve();
+                    // cr->restore();
+                    cr->stroke();
+                }
             }
         }
-        queue_draw();
+        // queue_draw();
         Node node = Node::clickedNode[0];
         // std::vector<int> a = Tuile::getTilesOfANode(node, tuilesVector);
     }
@@ -221,6 +235,7 @@ void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
+        cr->save();
         cr->set_line_width(4.9);
         cr->set_source_rgb(0.0, 0.5, 0.0);
         cr->move_to(nodesOfTheEdge[0].getX(), nodesOfTheEdge[0].getY());
@@ -240,6 +255,7 @@ std::vector<std::vector<int>> Drawing::shuffleTokensPositions()
 
 CatanMainWindow::CatanMainWindow() {
 
+    // GAME->setPlayers();
     // set title
     set_title("Catan Universe Game");
 
@@ -276,8 +292,13 @@ CatanMainWindow::CatanMainWindow() {
     buildRoute.signal_clicked().connect(
         sigc::mem_fun(*this, &CatanMainWindow::enableBuildRoutes)
     );
+    nextPlayer.add_label("Next Player");
+    nextPlayer.signal_clicked().connect(
+        sigc::mem_fun(*this, &CatanMainWindow::switchPlayer)
+    );
     leftUpBox->pack_start(build);
     leftUpBox->pack_start(buildRoute);
+    leftUpBox->pack_start(nextPlayer);
     leftUpBox->set_halign(Gtk::ALIGN_START);
     leftUpBox->set_valign(Gtk::ALIGN_START);
 
@@ -300,7 +321,7 @@ CatanMainWindow::CatanMainWindow() {
     // mainGrid.set_halign(Gtk::ALIGN_CENTER);
     // mainGrid.set_valign(Gtk::ALIGN_CENTER);
 
-    queue_draw();
+    // queue_draw();
 
     // add grid
     add(mainGrid);
@@ -322,7 +343,7 @@ void CatanMainWindow::setDiceValue(int a)
 
 void CatanMainWindow::onClickStartDice()
 {
-    int random = GAME.startDice();
+    int random = GAME->startDice();
     this->setDiceValue(random);
     this->right_label.set_text("Dice value = " + std::to_string(this->getDiceValue()));
 }
@@ -334,7 +355,7 @@ int CatanMainWindow::getDiceValue()
 
 void CatanMainWindow::enableBuild()
 {
-    GAME.enableBuilding();
+    GAME->enableBuilding();
     Gtk::MessageDialog d(*this, "Press on a green point to build",
     false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
     d.run();
@@ -342,8 +363,34 @@ void CatanMainWindow::enableBuild()
 
 void CatanMainWindow::enableBuildRoutes()
 {
-    GAME.enableBuildingRoute();
+    GAME->enableBuildingRoute();
     // Gtk::MessageDialog d(*this, "Click on the two points to build a route",
     // false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
     // d.run();
+}
+
+
+// Player CatanMainWindow::getCurrentPlayer(int player)
+// {
+//     this->currentPlayer = GAME->getPlayers()->at(player);
+//     return this->currentPlayer;
+// }
+
+int CatanMainWindow::playerId = 0;
+// int CatanMainWindow::numPlayers;
+
+void CatanMainWindow::switchPlayer()
+{
+    if (CatanMainWindow::playerId != this->players->size() - 1)
+        CatanMainWindow::playerId++;
+    else
+        CatanMainWindow::playerId = 0;
+}
+
+std::vector<Player>* CatanMainWindow::getPlayers()
+{
+    this->players->at(0) = Player(1);
+    this->players->at(1) = Player(2);
+    this->players->at(2) = Player(3);
+    return this->players;
 }

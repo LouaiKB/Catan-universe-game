@@ -121,7 +121,6 @@ bool Node::isClicked = false;
 bool Node::playerOn = true;
 bool Node::buildRoute = false;
 
-
 void Node::setAllNodes(Node node)
 {
     Node::allNodes->push_back(node);

@@ -16,10 +16,15 @@ public:
     bool buildCity();
     int getScore();
     int getNumberOfPlayer();
+    std::string getSettlment();
+    void setAppropriateNode(Node);
+    static std::vector<Player> *allClickedNodes;
+    Node getAppropriateNode();
 
 private:
     // we have 5 types of ressources: 1- Brique, 2- Pierre
     // 3- Mouton, 4- Blé, 5-Bois.
+    std::vector<Node> *occupiedNodes = new std::vector<Node>();
     std::vector<int> ressources;
     std::vector<int> tiles;
     std::string settlment;
@@ -28,6 +33,7 @@ private:
     std::vector<std::string> *cities = new std::vector<std::string>();
     int number;
     int score;
+    Node hasNode;
 };
 
 class GamePlay
@@ -41,8 +47,10 @@ public:
     int startDice();
     void enableBuilding();
     void enableBuildingRoute();
+    void setPlayers();
+    std::vector<Player>* getPlayers();
 
 private:
-    std::vector<Player> players;
+    std::vector<Player> *players;
 };
 #endif
