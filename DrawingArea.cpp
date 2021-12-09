@@ -24,14 +24,21 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
 
     if (Node::playerOn) {
         Node node((int)event->x, (int)event->y);
-        node.setOccupied();
-        node.setAdjacentNodes();
-        if (Node::checkIfNodeExists(node, Node::allNodes)) {
-            Node::setClickedNode(node);
-            Node::isClicked = true;
-            Node::playerOn = false;
+        if (Node::checkIfNodeExists(node, Node::allClickedNodes)) {
+            CatanMainWindow win;
+            Gtk::MessageDialog d(win, "You can't build here!",
+                false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+            d.run();
+        } else {
+            node.setOccupied();
+            node.setAdjacentNodes();
+            if (Node::checkIfNodeExists(node, Node::allNodes)) {
+                Node::setClickedNode(node);
+                Node::isClicked = true;
+                Node::playerOn = false;
+            }
+            queue_draw();
         }
-        queue_draw();
     } else {
         CatanMainWindow win;
         Gtk::MessageDialog d(win, "Press on the BUILD button to enable building",
@@ -187,6 +194,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
             currentPlayer.setAppropriateNode(Node::clickedNode[0]);
             Player::allClickedNodes->push_back(currentPlayer);
             Node::isClicked = false;
+            Node::allClickedNodes->push_back(Node::clickedNode[0]);
         }
         for (int j = 0; j < Player::allClickedNodes->size(); j++) {
             houseImage = Gdk::Pixbuf::create_from_file(Player::allClickedNodes->at(j).getSettlment());
@@ -209,7 +217,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
             for (int i = 0; i < adjacentNodes.size(); i++) {
                 // search the node from all nodes
                 Node specifiNode = Node::getSpecificNode(adjacentNodes[i]);
-                
+                Node::allClickedNodes->push_back(specifiNode);
                 // if we find that node 
                 if (specifiNode.getX()) {
                     cr->set_line_width(1.0);

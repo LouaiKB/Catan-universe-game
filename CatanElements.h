@@ -16,6 +16,7 @@ public:
     // All static methods
     static std::vector<Node> *allNodes;
     static std::vector<Node> *occupiedNodes;
+    static std::vector<Node> *allClickedNodes;
     static Node *clickedNode;
     static bool isClicked;
     static bool playerOn;

@@ -115,6 +115,7 @@ std::vector<Node> Node::getAdjacentNodes() {
 
 std::vector<Node> *Node::occupiedNodes = new std::vector<Node>();
 std::vector<Node> *Node::allNodes = new std::vector<Node>();
+std::vector<Node> *Node::allClickedNodes = new std::vector<Node>();
 
 Node * Node::clickedNode = new Node[1];
 bool Node::isClicked = false;
