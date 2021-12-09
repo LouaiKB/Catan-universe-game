@@ -487,7 +487,8 @@ void CatanMainWindow::getPlayersFromCombo()
     Gtk::MessageDialog dialog(*this, "Number of players", false, Gtk::MESSAGE_INFO);
     dialog.set_secondary_text("There will be " + combo.get_active_text() + " players!");
     dialog.run();
-    this->numberOfPlayers = std::stoi(combo.get_active_text());
+    // this->numberOfPlayers = std::stoi(combo.get_active_text());
+    std::cout << std::stoi(combo.get_active_text()) << std::endl;
 }
 
 // void CatanMainWindow::setNumberOfPlayers()
