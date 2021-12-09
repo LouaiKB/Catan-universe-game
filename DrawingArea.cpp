@@ -15,6 +15,7 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
         Edge edge = Edge::getSpecificEdge(node, Edge::allEdges);
         if (Edge::checkIfNodeExists(edge, Edge::allEdges)) {
             Edge::setClickedNode(edge);
+            Edge::isClicked = true;
             Node::buildRoute = false;
         }
         queue_draw();
@@ -143,8 +144,6 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
         // loop through each edge node and draw a cricle
         for (int nodeindex = 0; nodeindex < edges->size(); nodeindex++)
         {
-            // currentNode = {nodes[nodeindex].getX(), nodes[nodeindex].getY()};
-
             Edge currentEdge = edges->at(nodeindex);
 
             if (!Edge::checkIfNodeExists(currentEdge, Edge::allEdges))
@@ -179,21 +178,21 @@ void Drawing::setTuiles(int index, std::string img)
 void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 {
     CatanMainWindow win;
-    std::vector<Player>* players = win.getPlayers();
+    win.setAllPlayers();
+
     if (Node::clickedNode[0].getX() != 0) {
-        Player currentPlayer = players->at(CatanMainWindow::playerId);
-        currentPlayer.setAppropriateNode(Node::clickedNode[0]);
-        Player::allClickedNodes->push_back(currentPlayer);
-        // get the house
-        // Player* currPlayer = nullptr;
-        // Player currPlayer = win.getCurrentPlayer(0);
+        if (Node::isClicked) {
+            win.setCurrentPlayer();
+            Player currentPlayer = win.getCurrentPlayer();
+            currentPlayer.setAppropriateNode(Node::clickedNode[0]);
+            Player::allClickedNodes->push_back(currentPlayer);
+            Node::isClicked = false;
+        }
         for (int j = 0; j < Player::allClickedNodes->size(); j++) {
             houseImage = Gdk::Pixbuf::create_from_file(Player::allClickedNodes->at(j).getSettlment());
             houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
                                                 Gdk::INTERP_BILINEAR);
             cr->save();
-            // double x_pos = Node::clickedNode[0].getX() - 20;
-            // double y_pos = Node::clickedNode[0].getY() - 20;
 
             Node currentNode = Player::allClickedNodes->at(j).getAppropriateNode();
             double x_pos = currentNode.getX() - 20;
@@ -224,23 +223,61 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
                 }
             }
         }
-        // queue_draw();
-        Node node = Node::clickedNode[0];
-        // std::vector<int> a = Tuile::getTilesOfANode(node, tuilesVector);
     }
 }
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
+    CatanMainWindow win;
+    win.setAllPlayers();
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
-        std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
-        cr->save();
-        cr->set_line_width(4.9);
-        cr->set_source_rgb(0.0, 0.5, 0.0);
-        cr->move_to(nodesOfTheEdge[0].getX(), nodesOfTheEdge[0].getY());
-        cr->line_to(nodesOfTheEdge[1].getX(), nodesOfTheEdge[1].getY());
-        cr->stroke();
+        if (Edge::isClicked) {
+            win.setCurrentPlayer();
+            Player currentPlayer = win.getCurrentPlayer();
+            currentPlayer.setAppropriateEdge(Edge::clickedEdge[0]);
+            Player::allClickedEdges->push_back(currentPlayer);
+            Edge::isClicked = false;
+        }
+        for (int i = 0; i < Player::allClickedEdges->size(); i++) {
+            Edge currentEdge = Player::allClickedEdges->at(i).getAppropriateEdge();
+            std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(currentEdge);
+            cr->save();
+            cr->set_line_width(4.9);
+            switch (Player::allClickedEdges->at(i).getNumberOfPlayer())
+            {
+            case 1:
+                cr->set_source_rgb(0.0, 0.5, 0.0);
+                break;
+            
+            case 2:
+                cr->set_source_rgb(0.0, 0.0, 0.5);
+                break;
+            
+            case 3:
+                cr->set_source_rgb(0.5, 0.0, 0.0);
+                break;
+            
+            case 4:
+                cr->set_source_rgb(0.5, 0.5, 0.0);
+                break;
+            
+            case 5:
+                cr->set_source_rgb(0.6, 0.8, 0.1);
+                break;
+            
+            case 6:
+                cr->set_source_rgb(0.8, 0.8, 0.8);
+                break;
+
+            default:
+                break;
+            }
+
+            cr->move_to(nodesOfTheEdge[0].getX(), nodesOfTheEdge[0].getY());
+            cr->line_to(nodesOfTheEdge[1].getX(), nodesOfTheEdge[1].getY());
+            cr->stroke();
+        }
     }
 }
 
@@ -381,16 +418,35 @@ int CatanMainWindow::playerId = 0;
 
 void CatanMainWindow::switchPlayer()
 {
-    if (CatanMainWindow::playerId != this->players->size() - 1)
+    if (CatanMainWindow::playerId != this->players->size() - 1) {
         CatanMainWindow::playerId++;
-    else
+    }
+    else {
         CatanMainWindow::playerId = 0;
+    }
 }
 
-std::vector<Player>* CatanMainWindow::getPlayers()
+// std::vector<Player>* CatanMainWindow::getPlayers()
+// {
+//     this->players->at(0) = Player(1);
+//     this->players->at(1) = Player(2);
+//     this->players->at(2) = Player(3);
+//     return this->players;
+// }
+
+void CatanMainWindow::setAllPlayers()
 {
-    this->players->at(0) = Player(1);
-    this->players->at(1) = Player(2);
-    this->players->at(2) = Player(3);
-    return this->players;
+    this->players->at(0) = Player(2);
+    this->players->at(1) = Player(3);
+    this->players->at(2) = Player(4);
+}
+
+Player CatanMainWindow::getCurrentPlayer()
+{
+    return this->currentPlayer;
+}
+
+void CatanMainWindow::setCurrentPlayer()
+{
+    this->currentPlayer = this->players->at(CatanMainWindow::playerId);
 }

@@ -63,11 +63,13 @@ public:
     int getDiceValue();
     void switchPlayer();
     static int playerId;
+    Player getCurrentPlayer();
     // num players have the length of vector players
     // static int numPlayers;
-    // void setAllPlayers();
+    void setAllPlayers();
+    void setCurrentPlayer();
     // Player getCurrentPlayer(int);
-    std::vector<Player>* getPlayers();
+    // std::vector<Player>* getPlayers();
 
 private:
     Drawing drawing;
@@ -79,9 +81,8 @@ private:
     Gtk::Box* leftUpBox = nullptr;
     Gtk::EventBox eventBox;
     GamePlay* GAME = nullptr;
-    // Player* currentPlayer = nullptr;
-    // Player currentPlayer;
     std::vector<Player>* players = new std::vector<Player>(3);
+    Player currentPlayer;
     int diceValue;
 };
 

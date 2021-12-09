@@ -54,6 +54,7 @@ public:
     static void setClickedNode(Edge);
     static Edge getSpecificEdge(Node, std::vector<Edge>*);
     static Edge* clickedEdge;
+    static bool isClicked;
     int getRadiusX();
     int getRadiusY();
 

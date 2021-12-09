@@ -266,3 +266,5 @@ void Edge::setClickedNode(Edge edge)
     Edge::clickedEdge = new Edge[1];
     Edge::clickedEdge[0] = edge;
 }
+
+bool Edge::isClicked = true;

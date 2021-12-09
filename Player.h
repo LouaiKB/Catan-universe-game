@@ -18,8 +18,11 @@ public:
     int getNumberOfPlayer();
     std::string getSettlment();
     void setAppropriateNode(Node);
+    void setAppropriateEdge(Edge);
     static std::vector<Player> *allClickedNodes;
+    static std::vector<Player> *allClickedEdges;
     Node getAppropriateNode();
+    Edge getAppropriateEdge();
 
 private:
     // we have 5 types of ressources: 1- Brique, 2- Pierre
@@ -34,6 +37,7 @@ private:
     int number;
     int score;
     Node hasNode;
+    Edge hasEdge;
 };
 
 class GamePlay

@@ -202,9 +202,21 @@ void Player::setAppropriateNode(Node node)
     this->hasNode = node;
 }
 
-std::vector<Player> *Player::allClickedNodes = new std::vector<Player>();
+void Player::setAppropriateEdge(Edge edge)
+{
+    this->hasEdge = edge;
+}
+
 
 Node Player::getAppropriateNode()
 {
     return this->hasNode;
 }
+
+Edge Player::getAppropriateEdge()
+{
+    return this->hasEdge;
+}
+
+std::vector<Player> *Player::allClickedNodes = new std::vector<Player>();
+std::vector<Player> *Player::allClickedEdges = new std::vector<Player>();
