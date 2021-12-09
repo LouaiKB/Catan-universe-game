@@ -24,21 +24,21 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
 
     if (Node::playerOn) {
         Node node((int)event->x, (int)event->y);
-        if (Node::checkIfNodeExists(node, Node::allClickedNodes)) {
-            CatanMainWindow win;
-            Gtk::MessageDialog d(win, "You can't build here!",
-                false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-            d.run();
-        } else {
-            node.setOccupied();
-            node.setAdjacentNodes();
-            if (Node::checkIfNodeExists(node, Node::allNodes)) {
+        if (Node::checkIfNodeExists(node, Node::allNodes)) {
+            if (Node::checkIfNodeExists(node, Node::allClickedNodes)) {
+                CatanMainWindow win;
+                Gtk::MessageDialog d(win, "You can't build here!",
+                    false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+                d.run();
+            } else {
+                node.setOccupied();
+                node.setAdjacentNodes();
                 Node::setClickedNode(node);
                 Node::isClicked = true;
                 Node::playerOn = false;
-            }
-            queue_draw();
+            } 
         }
+            queue_draw();
     } else {
         CatanMainWindow win;
         Gtk::MessageDialog d(win, "Press on the BUILD button to enable building",
@@ -341,6 +341,7 @@ CatanMainWindow::CatanMainWindow() {
     nextPlayer.signal_clicked().connect(
         sigc::mem_fun(*this, &CatanMainWindow::switchPlayer)
     );
+
     leftUpBox->pack_start(build);
     leftUpBox->pack_start(buildRoute);
     leftUpBox->pack_start(nextPlayer);
@@ -351,11 +352,22 @@ CatanMainWindow::CatanMainWindow() {
     // configure right side
     right_label.set_text("Dice value = 0");
     startDice.add_label("Throw dice");
+    choosePlayer.add_label("choose players");
+    choosePlayer.signal_clicked().connect(sigc::mem_fun(*this, &CatanMainWindow::getPlayersFromCombo));
     startDice.signal_clicked().connect(sigc::mem_fun(*this, &CatanMainWindow::onClickStartDice));
     rightUpBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    combo.append("2");
+    combo.append("3");
+    combo.append("4");
+    combo.append("5");
+    combo.append("6");
+    combo.append("choose number of players");
+    combo.set_active(5);
     rightUpBox->set_spacing(10);
     rightUpBox->pack_start(right_label);
     rightUpBox->pack_start(startDice);
+    rightUpBox->pack_start(combo);
+    rightUpBox->pack_start(choosePlayer);
     rightUpBox->set_halign(Gtk::ALIGN_END);
     rightUpBox->set_valign(Gtk::ALIGN_END);
 
@@ -427,6 +439,8 @@ int CatanMainWindow::playerId = 0;
 void CatanMainWindow::switchPlayer()
 {
     if (CatanMainWindow::playerId != this->players->size() - 1) {
+        left_label.set_text("the turn is up to the user number " + std::to_string(CatanMainWindow::playerId + 1)
+            + "\nScore = " + std::to_string(this->currentPlayer.getScore()));
         CatanMainWindow::playerId++;
     }
     else {
@@ -444,6 +458,15 @@ void CatanMainWindow::switchPlayer()
 
 void CatanMainWindow::setAllPlayers()
 {
+    // std::cout << this->numberOfPlayers << std::endl;
+    // if (this->numberOfPlayers == 0) {
+    //     this->numberOfPlayers = 1;
+    // } else {
+    //     this->numberOfPlayers = 1;
+    // }
+    // for (int i = 0; i < this->numberOfPlayers; i++) {
+    //     this->players->at(i) = Player(i+1);
+    // }
     this->players->at(0) = Player(2);
     this->players->at(1) = Player(3);
     this->players->at(2) = Player(4);
@@ -458,3 +481,15 @@ void CatanMainWindow::setCurrentPlayer()
 {
     this->currentPlayer = this->players->at(CatanMainWindow::playerId);
 }
+
+void CatanMainWindow::getPlayersFromCombo()
+{
+    Gtk::MessageDialog dialog(*this, "Number of players", false, Gtk::MESSAGE_INFO);
+    dialog.set_secondary_text("There will be " + combo.get_active_text() + " players!");
+    dialog.run();
+    this->numberOfPlayers = std::stoi(combo.get_active_text());
+}
+
+// void CatanMainWindow::setNumberOfPlayers()
+// {
+// }

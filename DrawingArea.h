@@ -62,12 +62,15 @@ public:
     void enableBuildRoutes();
     int getDiceValue();
     void switchPlayer();
+    void getPlayersFromCombo();
     static int playerId;
     Player getCurrentPlayer();
     // num players have the length of vector players
     // static int numPlayers;
     void setAllPlayers();
     void setCurrentPlayer();
+    // void setNumberOfPlayers();
+    void getNumberOfPlayers();
     // Player getCurrentPlayer(int);
     // std::vector<Player>* getPlayers();
 
@@ -75,12 +78,14 @@ private:
     Drawing drawing;
     Gtk::Grid mainGrid;
     Gtk::Box imageBox;
-    Gtk::Button startDice, build, buildRoute, nextPlayer;
+    Gtk::Button startDice, build, buildRoute, choosePlayer,nextPlayer;
     Gtk::Label left_label, right_label;
     Gtk::Box* rightUpBox = nullptr;
     Gtk::Box* leftUpBox = nullptr;
+    Gtk::ComboBoxText combo;
     Gtk::EventBox eventBox;
     GamePlay* GAME = nullptr;
+    int numberOfPlayers;
     std::vector<Player>* players = new std::vector<Player>(3);
     Player currentPlayer;
     int diceValue;
