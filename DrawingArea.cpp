@@ -238,9 +238,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    // CatanMainWindow win(CatanMainWindow::comboValue);
     my_win.getPlayers();
-    // win.setAllPlayers();
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         if (Edge::isClicked) {
@@ -317,9 +315,6 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     eventBox.add(drawing);
     // eventBox.set_size_request(1800, 1500);
     eventBox.set_events(Gdk::ALL_EVENTS_MASK);
-    // eventBox.signal_button_press_event().connect(
-    //     sigc::mem_fun(*this, &CatanMainWindow::onClicked)
-    // );
 
     imageBox.set_spacing(5);
     imageBox.pack_start(eventBox, Gtk::PACK_EXPAND_WIDGET);
@@ -350,6 +345,16 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     leftUpBox->pack_start(nextPlayer);
     leftUpBox->set_halign(Gtk::ALIGN_START);
     leftUpBox->set_valign(Gtk::ALIGN_START);
+    leftUpBox->set_margin_left(10);
+    leftUpBox->set_margin_right(10);
+    leftUpBox->set_margin_top(10);
+    leftUpBox->set_margin_bottom(10);
+    leftFrame.set_label("left");
+    leftFrame.add(*leftUpBox);
+    leftFrame.set_margin_left(10);
+    leftFrame.set_margin_right(10);
+    leftFrame.set_margin_top(10);
+    leftFrame.set_margin_bottom(10);
 
 
     // configure right side
@@ -371,13 +376,27 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     rightUpBox->pack_start(startDice);
     rightUpBox->pack_start(combo);
     rightUpBox->pack_start(choosePlayer);
-    rightUpBox->set_halign(Gtk::ALIGN_END);
-    rightUpBox->set_valign(Gtk::ALIGN_END);
-
+    // rightUpBox->set_halign(Gtk::ALIGN_END);
+    // rightUpBox->set_valign(Gtk::ALIGN_END);
     // attach into grid and center the main grid
-    mainGrid.attach(imageBox, 12, 0, 3, 1);
-    mainGrid.attach(*leftUpBox, 0, 0, 1, 1);
-    mainGrid.attach(*rightUpBox, 30, 0, 1, 1);
+    rightUpBox->set_margin_left(10);
+    rightUpBox->set_margin_right(10);
+    rightUpBox->set_margin_top(10);
+    rightUpBox->set_margin_bottom(10);
+    mainGrid.set_column_spacing(20);
+    mainGrid.attach(imageBox, 1, 0, 3, 1);
+    // mainGrid.attach(leftFrame, 0, 0, 1, 1);
+    // mainGrid.attach(*rightUpBox, 6, 0, 1, 1);
+    rightFrame.add(*rightUpBox);
+    rightFrame.set_label("BBD");
+    rightFrame.set_margin_left(10);
+    rightFrame.set_margin_right(10);
+    rightFrame.set_margin_top(10);
+    rightFrame.set_margin_bottom(10);
+    leftGrid.attach(leftFrame, 0, 0, 1, 1);
+    rightGrid.attach(rightFrame, 4, 0, 1, 1);
+    mainGrid.attach(rightGrid, 4, 0, 1, 1);
+    mainGrid.attach(leftGrid, 0, 0, 1, 1);
     // mainGrid.set_halign(Gtk::ALIGN_CENTER);
     // mainGrid.set_valign(Gtk::ALIGN_CENTER);
 
@@ -389,12 +408,6 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
 } 
 
 CatanMainWindow::~CatanMainWindow() {}
-
-// bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
-//     // std::cout << "x= " << button_event-> x << std::endl;
-//     // std::cout << "y= " << button_event-> y << std::endl;
-//     // std::cout << "-------------------------------" << std::endl;
-// }
 
 void CatanMainWindow::setDiceValue(int a)
 {
@@ -473,25 +486,12 @@ void CatanMainWindow::getPlayersFromCombo()
 
 bool CatanMainWindow::startPlay = false;
 int CatanMainWindow::comboValue;
-// CatanMainWindow::CatanMainWindow(int numOfPlayers) : drawing(*this)
-// {
-//     // this->players = new std::vector<Player>(numOfPlayers);
-//     for (int i = 0; i < numOfPlayers; i++) {
-//         Player player = Player(i+1);
-//         this->players.push_back(player);
-//         // std::cout << this->players.at(i)->getSettlment() << std::endl;
-//     }
-//     // players.push_back(Player(1));
-//     // players.push_back(Player(2));
-//     // players.push_back(Player(3));
-// }
 
 void CatanMainWindow::getPlayers()
 {
     for (int i = 0; i < CatanMainWindow::comboValue; i++) {
         Player player = Player(i+1);
         this->players.push_back(player);
-        // std::cout << this->players.at(i)->getSettlment() << std::endl;
     }
 
 }

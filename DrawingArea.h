@@ -76,7 +76,7 @@ public:
 
 private:
     Drawing drawing;
-    Gtk::Grid mainGrid;
+    Gtk::Grid mainGrid, rightGrid, leftGrid;
     Gtk::Box imageBox;
     Gtk::Button startDice, build, buildRoute, choosePlayer,nextPlayer;
     Gtk::Label left_label, right_label;
@@ -84,6 +84,7 @@ private:
     Gtk::Box* leftUpBox = nullptr;
     Gtk::ComboBoxText combo;
     Gtk::EventBox eventBox;
+    Gtk::Frame rightFrame, leftFrame;
     GamePlay* GAME = nullptr;
     // int numberOfPlayers;
     std::vector<Player> players;
