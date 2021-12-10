@@ -63,14 +63,16 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     // Draw circles
     this->drawNodeCircles(cr);
 
-    // Draw house onclick
-    this->drawHouses(cr);
+    if (CatanMainWindow::startPlay) {    
+        // Draw house onclick
+        this->drawHouses(cr);
 
-    // Draw Routes
-    this->drawRoutes(cr);
+        // Draw Routes
+        this->drawRoutes(cr);
+    }
 
     // update the widget
-    // queue_draw();
+    queue_draw();
 
     return true;
 }
@@ -184,13 +186,12 @@ void Drawing::setTuiles(int index, std::string img)
 // Initialize the draw house method
 void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    CatanMainWindow win;
-    win.setAllPlayers();
-
+    CatanMainWindow win(CatanMainWindow::comboValue);
     if (Node::clickedNode[0].getX() != 0) {
         if (Node::isClicked) {
             win.setCurrentPlayer();
             Player currentPlayer = win.getCurrentPlayer();
+            std::cout << "CURRREEENT " << currentPlayer.getSettlment();
             currentPlayer.setAppropriateNode(Node::clickedNode[0]);
             Player::allClickedNodes->push_back(currentPlayer);
             Node::isClicked = false;
@@ -236,8 +237,8 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    CatanMainWindow win;
-    win.setAllPlayers();
+    CatanMainWindow win(CatanMainWindow::comboValue);
+    // win.setAllPlayers();
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         if (Edge::isClicked) {
@@ -314,9 +315,9 @@ CatanMainWindow::CatanMainWindow() {
     eventBox.add(drawing);
     // eventBox.set_size_request(1800, 1500);
     eventBox.set_events(Gdk::ALL_EVENTS_MASK);
-    eventBox.signal_button_press_event().connect(
-        sigc::mem_fun(*this, &CatanMainWindow::onClicked)
-    );
+    // eventBox.signal_button_press_event().connect(
+    //     sigc::mem_fun(*this, &CatanMainWindow::onClicked)
+    // );
 
     imageBox.set_spacing(5);
     imageBox.pack_start(eventBox, Gtk::PACK_EXPAND_WIDGET);
@@ -387,11 +388,11 @@ CatanMainWindow::CatanMainWindow() {
 
 CatanMainWindow::~CatanMainWindow() {}
 
-bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
-    // std::cout << "x= " << button_event-> x << std::endl;
-    // std::cout << "y= " << button_event-> y << std::endl;
-    // std::cout << "-------------------------------" << std::endl;
-}
+// bool CatanMainWindow::onClicked(GdkEventButton* button_event) {
+//     // std::cout << "x= " << button_event-> x << std::endl;
+//     // std::cout << "y= " << button_event-> y << std::endl;
+//     // std::cout << "-------------------------------" << std::endl;
+// }
 
 void CatanMainWindow::setDiceValue(int a)
 {
@@ -421,56 +422,22 @@ void CatanMainWindow::enableBuild()
 void CatanMainWindow::enableBuildRoutes()
 {
     GAME->enableBuildingRoute();
-    // Gtk::MessageDialog d(*this, "Click on the two points to build a route",
-    // false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
-    // d.run();
 }
 
-
-// Player CatanMainWindow::getCurrentPlayer(int player)
-// {
-//     this->currentPlayer = GAME->getPlayers()->at(player);
-//     return this->currentPlayer;
-// }
-
 int CatanMainWindow::playerId = 0;
-// int CatanMainWindow::numPlayers;
 
 void CatanMainWindow::switchPlayer()
 {
-    if (CatanMainWindow::playerId != this->players->size() - 1) {
-        left_label.set_text("the turn is up to the user number " + std::to_string(CatanMainWindow::playerId + 1)
+    if (CatanMainWindow::playerId != this->players.size() - 1) {
+        left_label.set_text("the turn is up to the user number " + std::to_string(CatanMainWindow::playerId + 2)
             + "\nScore = " + std::to_string(this->currentPlayer.getScore()));
         CatanMainWindow::playerId++;
-    }
-    else {
+        std::cout << "\n" <<CatanMainWindow::playerId << std::endl;
+    } else {
         CatanMainWindow::playerId = 0;
     }
 }
 
-// std::vector<Player>* CatanMainWindow::getPlayers()
-// {
-//     this->players->at(0) = Player(1);
-//     this->players->at(1) = Player(2);
-//     this->players->at(2) = Player(3);
-//     return this->players;
-// }
-
-void CatanMainWindow::setAllPlayers()
-{
-    // std::cout << this->numberOfPlayers << std::endl;
-    // if (this->numberOfPlayers == 0) {
-    //     this->numberOfPlayers = 1;
-    // } else {
-    //     this->numberOfPlayers = 1;
-    // }
-    // for (int i = 0; i < this->numberOfPlayers; i++) {
-    //     this->players->at(i) = Player(i+1);
-    // }
-    this->players->at(0) = Player(2);
-    this->players->at(1) = Player(3);
-    this->players->at(2) = Player(4);
-}
 
 Player CatanMainWindow::getCurrentPlayer()
 {
@@ -479,7 +446,16 @@ Player CatanMainWindow::getCurrentPlayer()
 
 void CatanMainWindow::setCurrentPlayer()
 {
-    this->currentPlayer = this->players->at(CatanMainWindow::playerId);
+    try
+    {
+        this->currentPlayer = this->players.at(CatanMainWindow::playerId);
+    }
+    catch(const std::exception& e)
+    {
+        CatanMainWindow::playerId = 0;
+        this->currentPlayer = this->players.at(CatanMainWindow::playerId);
+    }
+    
 }
 
 void CatanMainWindow::getPlayersFromCombo()
@@ -487,10 +463,16 @@ void CatanMainWindow::getPlayersFromCombo()
     Gtk::MessageDialog dialog(*this, "Number of players", false, Gtk::MESSAGE_INFO);
     dialog.set_secondary_text("There will be " + combo.get_active_text() + " players!");
     dialog.run();
-    // this->numberOfPlayers = std::stoi(combo.get_active_text());
-    std::cout << std::stoi(combo.get_active_text()) << std::endl;
+    CatanMainWindow::startPlay = true;
+    CatanMainWindow::comboValue = std::stoi(combo.get_active_text());
 }
 
-// void CatanMainWindow::setNumberOfPlayers()
-// {
-// }
+bool CatanMainWindow::startPlay = false;
+int CatanMainWindow::comboValue;
+CatanMainWindow::CatanMainWindow(int numOfPlayers)
+{
+    // this->players = new std::vector<Player>(numOfPlayers);
+    for (int i = 0; i < numOfPlayers; i++) {
+        this->players.push_back(Player(i + 1));
+    }
+}

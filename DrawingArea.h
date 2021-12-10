@@ -54,8 +54,9 @@ class CatanMainWindow : public Gtk::Window
 {
 public:
     CatanMainWindow();
+    CatanMainWindow(int);
     virtual ~CatanMainWindow();
-    bool onClicked(GdkEventButton* button_event);
+    // bool onClicked(GdkEventButton* button_event);
     void onClickStartDice();
     void setDiceValue(int);
     void enableBuild();
@@ -64,15 +65,11 @@ public:
     void switchPlayer();
     void getPlayersFromCombo();
     static int playerId;
+    static bool startPlay;
     Player getCurrentPlayer();
-    // num players have the length of vector players
-    // static int numPlayers;
-    void setAllPlayers();
     void setCurrentPlayer();
-    // void setNumberOfPlayers();
     void getNumberOfPlayers();
-    // Player getCurrentPlayer(int);
-    // std::vector<Player>* getPlayers();
+    static int comboValue;
 
 private:
     Drawing drawing;
@@ -85,8 +82,8 @@ private:
     Gtk::ComboBoxText combo;
     Gtk::EventBox eventBox;
     GamePlay* GAME = nullptr;
-    int numberOfPlayers;
-    std::vector<Player>* players = new std::vector<Player>(3);
+    // int numberOfPlayers;
+    std::vector<Player> players;
     Player currentPlayer;
     int diceValue;
 };
