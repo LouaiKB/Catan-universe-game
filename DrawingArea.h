@@ -5,10 +5,12 @@
 #include <gtkmm/grid.h>
 #include "Player.h"
 
+class CatanMainWindow;
+
 class Drawing : public Gtk::DrawingArea
 {
 public:
-    Drawing();
+    Drawing(CatanMainWindow &w);
     ~Drawing();
     std::vector<std::vector<int>> shuffleTokensPositions();
 
@@ -48,13 +50,14 @@ private:
     std::vector<int> thiefTokenPositions = {600, 425};
     std::vector<std::vector<int>> randTokensPositions = shuffleTokensPositions();
     std::vector<Tuile> *tuilesVector = new std::vector<Tuile>(28);
+    CatanMainWindow &my_win;
 };
 
 class CatanMainWindow : public Gtk::Window 
 {
 public:
     CatanMainWindow();
-    CatanMainWindow(int);
+    // CatanMainWindow(int);
     virtual ~CatanMainWindow();
     // bool onClicked(GdkEventButton* button_event);
     void onClickStartDice();
@@ -68,7 +71,7 @@ public:
     static bool startPlay;
     Player getCurrentPlayer();
     void setCurrentPlayer();
-    void getNumberOfPlayers();
+    void getPlayers();
     static int comboValue;
 
 private:

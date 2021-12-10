@@ -1,6 +1,6 @@
 #include "DrawingArea.h"
 
-Drawing::Drawing()
+Drawing::Drawing(CatanMainWindow &w) : my_win(w)
 {
     mainBoardImage = Gdk::Pixbuf::create_from_file("images/Board.png");
     add_events(Gdk::BUTTON_PRESS_MASK);
@@ -26,8 +26,7 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
         Node node((int)event->x, (int)event->y);
         if (Node::checkIfNodeExists(node, Node::allNodes)) {
             if (Node::checkIfNodeExists(node, Node::allClickedNodes)) {
-                CatanMainWindow win;
-                Gtk::MessageDialog d(win, "You can't build here!",
+                Gtk::MessageDialog d(my_win, "You can't build here!",
                     false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
                 d.run();
             } else {
@@ -40,8 +39,8 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
         }
             queue_draw();
     } else {
-        CatanMainWindow win;
-        Gtk::MessageDialog d(win, "Press on the BUILD button to enable building",
+        // CatanMainWindow win;
+        Gtk::MessageDialog d(my_win, "Press on the BUILD button to enable building",
             false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
         d.run();
     }
@@ -64,11 +63,12 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     this->drawNodeCircles(cr);
 
     if (CatanMainWindow::startPlay) {    
+        // Draw Routes
+        this->drawRoutes(cr);
+        
         // Draw house onclick
         this->drawHouses(cr);
 
-        // Draw Routes
-        this->drawRoutes(cr);
     }
 
     // update the widget
@@ -186,12 +186,13 @@ void Drawing::setTuiles(int index, std::string img)
 // Initialize the draw house method
 void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    CatanMainWindow win(CatanMainWindow::comboValue);
+    // CatanMainWindow win(CatanMainWindow::comboValue);
+    my_win.getPlayers();
     if (Node::clickedNode[0].getX() != 0) {
         if (Node::isClicked) {
-            win.setCurrentPlayer();
-            Player currentPlayer = win.getCurrentPlayer();
-            std::cout << "CURRREEENT " << currentPlayer.getSettlment();
+            my_win.setCurrentPlayer();
+            Player currentPlayer = my_win.getCurrentPlayer();
+            // std::cout << "CURRREEENT " << currentPlayer.getSettlment();
             currentPlayer.setAppropriateNode(Node::clickedNode[0]);
             Player::allClickedNodes->push_back(currentPlayer);
             Node::isClicked = false;
@@ -237,13 +238,14 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    CatanMainWindow win(CatanMainWindow::comboValue);
+    // CatanMainWindow win(CatanMainWindow::comboValue);
+    my_win.getPlayers();
     // win.setAllPlayers();
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         if (Edge::isClicked) {
-            win.setCurrentPlayer();
-            Player currentPlayer = win.getCurrentPlayer();
+            my_win.setCurrentPlayer();
+            Player currentPlayer = my_win.getCurrentPlayer();
             currentPlayer.setAppropriateEdge(Edge::clickedEdge[0]);
             Player::allClickedEdges->push_back(currentPlayer);
             Edge::isClicked = false;
@@ -299,7 +301,7 @@ std::vector<std::vector<int>> Drawing::shuffleTokensPositions()
 }
 
 
-CatanMainWindow::CatanMainWindow() {
+CatanMainWindow::CatanMainWindow() : drawing(*this) {
 
     // GAME->setPlayers();
     // set title
@@ -465,14 +467,31 @@ void CatanMainWindow::getPlayersFromCombo()
     dialog.run();
     CatanMainWindow::startPlay = true;
     CatanMainWindow::comboValue = std::stoi(combo.get_active_text());
+    choosePlayer.hide();
+    combo.hide();
 }
 
 bool CatanMainWindow::startPlay = false;
 int CatanMainWindow::comboValue;
-CatanMainWindow::CatanMainWindow(int numOfPlayers)
+// CatanMainWindow::CatanMainWindow(int numOfPlayers) : drawing(*this)
+// {
+//     // this->players = new std::vector<Player>(numOfPlayers);
+//     for (int i = 0; i < numOfPlayers; i++) {
+//         Player player = Player(i+1);
+//         this->players.push_back(player);
+//         // std::cout << this->players.at(i)->getSettlment() << std::endl;
+//     }
+//     // players.push_back(Player(1));
+//     // players.push_back(Player(2));
+//     // players.push_back(Player(3));
+// }
+
+void CatanMainWindow::getPlayers()
 {
-    // this->players = new std::vector<Player>(numOfPlayers);
-    for (int i = 0; i < numOfPlayers; i++) {
-        this->players.push_back(Player(i + 1));
+    for (int i = 0; i < CatanMainWindow::comboValue; i++) {
+        Player player = Player(i+1);
+        this->players.push_back(player);
+        // std::cout << this->players.at(i)->getSettlment() << std::endl;
     }
+
 }
