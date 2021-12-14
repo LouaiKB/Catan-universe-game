@@ -68,10 +68,12 @@ public:
     void switchPlayer();
     void getPlayersFromCombo();
     static int playerId;
+    static int turn;
     static bool startPlay;
     Player getCurrentPlayer();
     void setCurrentPlayer();
     void getPlayers();
+    bool checkPlayers();
     static int comboValue;
 
 private:

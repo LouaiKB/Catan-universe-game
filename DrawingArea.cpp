@@ -194,8 +194,11 @@ void Drawing::setTuiles(int index, std::string img)
 // Initialize the draw house method
 void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    // CatanMainWindow win(CatanMainWindow::comboValue);
-    my_win.getPlayers();
+    // to check if the players are setted up to prevent overwritting
+    if (!my_win.checkPlayers()) {
+        std::cout << "setting playuers " << std::endl;
+        my_win.getPlayers();
+    }
     if (Node::clickedNode[0].getX() != 0) {
         if (Node::isClicked) {
             my_win.setCurrentPlayer();
@@ -246,7 +249,10 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    my_win.getPlayers();
+    if (!my_win.checkPlayers()) {
+        std::cout << "setting playuers " << std::endl;
+        my_win.getPlayers();
+    }
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         if (Edge::isClicked) {
@@ -452,11 +458,15 @@ int CatanMainWindow::playerId = 0;
 void CatanMainWindow::switchPlayer()
 {
     if (CatanMainWindow::playerId != this->players.size() - 1) {
-        left_label.set_text("the turn is up to the user number " + std::to_string(CatanMainWindow::playerId + 2)
+        CatanMainWindow::turn++;
+        left_label.set_text("the turn is up to the user number " + std::to_string(CatanMainWindow::turn)
             + "\nScore = " + std::to_string(this->currentPlayer.getScore()));
         CatanMainWindow::playerId++;
         std::cout << "\n" <<CatanMainWindow::playerId << std::endl;
     } else {
+        CatanMainWindow::turn = 1;
+        left_label.set_text("the turn is up to the user number " + std::to_string(CatanMainWindow::turn)
+            + "\nScore = " + std::to_string(this->currentPlayer.getScore()));
         CatanMainWindow::playerId = 0;
     }
 }
@@ -469,16 +479,7 @@ Player CatanMainWindow::getCurrentPlayer()
 
 void CatanMainWindow::setCurrentPlayer()
 {
-    try
-    {
-        this->currentPlayer = this->players.at(CatanMainWindow::playerId);
-    }
-    catch(const std::exception& e)
-    {
-        CatanMainWindow::playerId = 0;
-        this->currentPlayer = this->players.at(CatanMainWindow::playerId);
-    }
-    
+    this->currentPlayer = this->players.at(CatanMainWindow::playerId);
 }
 
 void CatanMainWindow::getPlayersFromCombo()
@@ -494,12 +495,21 @@ void CatanMainWindow::getPlayersFromCombo()
 
 bool CatanMainWindow::startPlay = false;
 int CatanMainWindow::comboValue;
+int CatanMainWindow::turn = 1;
 
 void CatanMainWindow::getPlayers()
 {
+    Player player;
     for (int i = 0; i < CatanMainWindow::comboValue; i++) {
-        Player player = Player(i+1);
+        player = Player(i+1);
         this->players.push_back(player);
     }
+}
 
+bool CatanMainWindow::checkPlayers()
+{
+    if (this->players.size() != 0)
+        return true;
+    else 
+        return false;
 }
