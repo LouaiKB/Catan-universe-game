@@ -13,10 +13,18 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
     if (Node::buildRoute) {
         Node node((int)event->x, (int)event->y);
         Edge edge = Edge::getSpecificEdge(node, Edge::allEdges);
-        if (Edge::checkIfNodeExists(edge, Edge::allEdges)) {
-            Edge::setClickedNode(edge);
-            Edge::isClicked = true;
-            Node::buildRoute = false;
+        std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
+        if (Node::checkIfNodeExists(nodesOfTheEdge.at(0), Node::allClickedNodes) &&
+            Node::checkIfNodeExists(nodesOfTheEdge.at(1), Node::allClickedNodes)) {
+            if (Edge::checkIfNodeExists(edge, Edge::allEdges)) {
+                Edge::setClickedNode(edge);
+                Edge::isClicked = true;
+                Node::buildRoute = false;
+            }
+        } else {
+            Gtk::MessageDialog d(my_win, "You can't build a route here!",
+                    false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+            d.run();
         }
         queue_draw();
         return 1;
@@ -26,7 +34,7 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
         Node node((int)event->x, (int)event->y);
         if (Node::checkIfNodeExists(node, Node::allNodes)) {
             if (Node::checkIfNodeExists(node, Node::allClickedNodes)) {
-                Gtk::MessageDialog d(my_win, "You can't build here!",
+                Gtk::MessageDialog d(my_win, "You can't build a house here!",
                     false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
                 d.run();
             } else {
