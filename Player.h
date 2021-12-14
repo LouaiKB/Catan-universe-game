@@ -16,7 +16,13 @@ public:
     bool buildCity();
     int getScore();
     int getNumberOfPlayer();
+    int getNumberOfBrick();
+    int getNumberOfLumber();
+    int getNumberOfGrain();
+    int getNumberOfOre();
+    int getNumberOfWool();
     std::string getSettlment();
+    void removeRessourceAfterBuilding(int);
     void setAppropriateNode(Node);
     void setAppropriateEdge(Edge);
     static std::vector<Player> *allClickedNodes;
@@ -25,8 +31,8 @@ public:
     Edge getAppropriateEdge();
 
 private:
-    // we have 5 types of ressources: 1- Brique, 2- Pierre
-    // 3- Mouton, 4- Blé, 5-Bois.
+    // we have 5 types of ressources: 1- Brique, 2- Pierre (Ore)
+    // 3- Mouton, 4- Blé(Grain), 5-Bois (Lumber).
     std::vector<Node> *occupiedNodes = new std::vector<Node>();
     std::vector<int> ressources;
     std::vector<int> tiles;

@@ -39,6 +39,7 @@ std::vector<Player>* GamePlay::getPlayers()
 Player::Player() {}
 
 Player::Player(int num) : number(num) {
+    std::cout << "Player construyuccerĵgùjlmknsdglmkn" << std::endl;
     this->score = 0;
     switch (this->number)
     {
@@ -74,7 +75,9 @@ Player::Player(int num) : number(num) {
     
     default:
         break;
-    }       
+    }
+    // at the begining each player will have these ressources
+    this->ressources = {1, 1, 5, 5, 1, 5, 4, 3, 1, 5, 4, 3};    
 }
 
 Player::~Player() {}
@@ -220,3 +223,65 @@ Edge Player::getAppropriateEdge()
 
 std::vector<Player> *Player::allClickedNodes = new std::vector<Player>();
 std::vector<Player> *Player::allClickedEdges = new std::vector<Player>();
+
+int Player::getNumberOfBrick()
+{
+    int numberOfBriks = 0;
+    for (int i = 0; i < this->ressources.size(); i++) {
+        if (ressources[i] == 1)
+            numberOfBriks += 1;
+    }
+    return numberOfBriks;
+}
+
+int Player::getNumberOfGrain()
+{
+    int numberOfGrains = 0;
+    for (int i = 0; i < this->ressources.size(); i++) {
+        if (ressources[i] == 4)
+            numberOfGrains += 1;
+    }
+}
+
+int Player::getNumberOfLumber()
+{
+    int n = 0;
+    for (int i = 0; i < this->ressources.size(); i++) {
+        if (ressources[i] == 5)
+            n += 1;
+    }
+    return n;
+}
+
+int Player::getNumberOfOre()
+{
+    int n = 0;
+    for (int i = 0; i < this->ressources.size(); i++) {
+        if (ressources[i] == 2)
+            n += 1;
+    }
+    return n;
+}
+
+int Player::getNumberOfWool()
+{
+    int n = 0;
+    for (int i = 0; i < this->ressources.size(); i++) {
+        if (ressources[i] == 3)
+            n += 1;
+    }
+    return n;
+}
+
+void Player::removeRessourceAfterBuilding(int a)
+{  
+    // std::cout << "size before ; " << ressources.size() << std::endl;
+    auto it = std::find(ressources.begin(), ressources.end(), a);
+    // check that there actually is a 3 in our vector
+    if (it != ressources.end()) {
+        ressources.erase(it);
+    }
+    // this->ressources.erase(std::remove(ressources.begin(), ressources.end(), a), 
+    //     ressources.end());
+    // std::cout << "size after : " << ressources.size() << std::endl;
+}

@@ -23,7 +23,7 @@ protected:
     void setTuiles(int, std::string);
     void drawHouses(const Cairo::RefPtr<Cairo::Context> &cr);
     void drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr);
-
+    Player player;
 private:
     Glib::RefPtr<Gdk::Pixbuf> mainBoardImage, tokenImage, houseImage, houseImage1;
     std::vector<std::string> tokensFileName = {
@@ -64,12 +64,18 @@ public:
     void setDiceValue(int);
     void enableBuild();
     void enableBuildRoutes();
+    void updateRessources();
     int getDiceValue();
     void switchPlayer();
     void getPlayersFromCombo();
     static int playerId;
     static int turn;
     static bool startPlay;
+    static bool switchPlay;
+    static bool firstStage;
+    static bool clickNext;
+    static bool clickNextRoute;
+    static Player currPlayer;
     Player getCurrentPlayer();
     void setCurrentPlayer();
     void getPlayers();
@@ -78,17 +84,17 @@ public:
 
 private:
     Drawing drawing;
-    Gtk::Grid mainGrid, rightGrid, leftGrid;
+    Gtk::Grid mainGrid, rightGrid, leftGrid, ressourceGrid;
     Gtk::Box imageBox;
-    Gtk::Button startDice, build, buildRoute, choosePlayer,nextPlayer;
-    Gtk::Label left_label, right_label;
+    Gtk::Button startDice, build, buildRoute, choosePlayer, nextPlayer;
+    Gtk::Label left_label, right_label, ressourceLabel;
     Gtk::Box* rightUpBox = nullptr;
     Gtk::Box* leftUpBox = nullptr;
+    // Gtk::Box* ressourceBox = nullptr;
     Gtk::ComboBoxText combo;
     Gtk::EventBox eventBox;
-    Gtk::Frame rightFrame, leftFrame;
+    Gtk::Frame rightFrame, leftFrame, ressourceFrame;
     GamePlay* GAME = nullptr;
-    // int numberOfPlayers;
     std::vector<Player> players;
     Player currentPlayer;
     int diceValue;

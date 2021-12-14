@@ -10,46 +10,114 @@ Drawing::~Drawing() {}
 
 bool Drawing::on_button_press_event(GdkEventButton* event)
 {
-    if (Node::buildRoute) {
-        Node node((int)event->x, (int)event->y);
-        Edge edge = Edge::getSpecificEdge(node, Edge::allEdges);
-        std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
-        if (Node::checkIfNodeExists(nodesOfTheEdge.at(0), Node::allClickedNodes) &&
-            Node::checkIfNodeExists(nodesOfTheEdge.at(1), Node::allClickedNodes)) {
-            if (Edge::checkIfNodeExists(edge, Edge::allEdges)) {
-                Edge::setClickedNode(edge);
-                Edge::isClicked = true;
-                Node::buildRoute = false;
-            }
-        } else {
-            Gtk::MessageDialog d(my_win, "You can't build a route here!",
-                    false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-            d.run();
-        }
-        queue_draw();
-        return 1;
+    if (CatanMainWindow::switchPlay) {
+        my_win.setCurrentPlayer();
+        CatanMainWindow::switchPlay = false;
     }
 
-    if (Node::playerOn) {
-        Node node((int)event->x, (int)event->y);
-        if (Node::checkIfNodeExists(node, Node::allNodes)) {
-            if (Node::checkIfNodeExists(node, Node::allClickedNodes)) {
-                Gtk::MessageDialog d(my_win, "You can't build a house here!",
-                    false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
-                d.run();
-            } else {
-                node.setOccupied();
-                node.setAdjacentNodes();
-                Node::setClickedNode(node);
-                Node::isClicked = true;
-                Node::playerOn = false;
-            } 
+    if (CatanMainWindow::startPlay) {
+        // to check if the players are setted up to prevent overwritting
+        if (!my_win.checkPlayers()) {
+            std::cout << "setting playuers " << std::endl;
+            my_win.getPlayers();
+            my_win.setCurrentPlayer();
         }
+        if (Node::buildRoute) {
+            Node node((int)event->x, (int)event->y);
+            Edge edge = Edge::getSpecificEdge(node, Edge::allEdges);
+            std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
+            if (Node::checkIfNodeExists(nodesOfTheEdge.at(0), Node::allClickedNodes) &&
+                Node::checkIfNodeExists(nodesOfTheEdge.at(1), Node::allClickedNodes)) {
+                if (Edge::checkIfNodeExists(edge, Edge::allEdges)) {
+                    if (!CatanMainWindow::firstStage) {
+
+                        if (CatanMainWindow::currPlayer.buildRoute()) {
+                            Edge::setClickedNode(edge);
+                            Edge::isClicked = true;
+                            Node::buildRoute = false;
+
+                            CatanMainWindow::currPlayer.removeRessourceAfterBuilding(1);
+                            CatanMainWindow::currPlayer.removeRessourceAfterBuilding(5);
+                            my_win.updateRessources();
+                        } else {
+                            Gtk::MessageDialog d(my_win, "You can't build you don't have enough ressources",
+                                false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+                            d.run();
+                        }
+                    } else {
+                        if (!CatanMainWindow::clickNextRoute) {
+                            Edge::setClickedNode(edge);
+                            Edge::isClicked = true;
+                            Node::buildRoute = false;
+                            CatanMainWindow::clickNextRoute = true;
+                        } else {
+                            Gtk::MessageDialog d(my_win, "Next player turn! click next",
+                                    false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+                            d.run();
+                        }
+                    }
+                }
+            } else {
+                Gtk::MessageDialog d(my_win, "You can't build a route here!",
+                        false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+                d.run();
+                Node::buildRoute = false;
+            }
             queue_draw();
+            return 1;
+        }
+
+        if (Node::playerOn) {
+            Node node((int)event->x, (int)event->y);
+            if (Node::checkIfNodeExists(node, Node::allNodes)) {
+                if (Node::checkIfNodeExists(node, Node::allClickedNodes)) {
+                    Gtk::MessageDialog d(my_win, "You can't build a house here!",
+                        false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+                    d.run();
+                } else {
+                    if (!CatanMainWindow::firstStage) {
+                        if (CatanMainWindow::currPlayer.buildSettlement()) {
+                            node.setOccupied();
+                            node.setAdjacentNodes();
+                            Node::setClickedNode(node);
+                            Node::isClicked = true;
+                            Node::playerOn = false;
+                            CatanMainWindow::currPlayer.removeRessourceAfterBuilding(1);
+                            CatanMainWindow::currPlayer.removeRessourceAfterBuilding(5);
+                            CatanMainWindow::currPlayer.removeRessourceAfterBuilding(4);
+                            CatanMainWindow::currPlayer.removeRessourceAfterBuilding(3);
+                            my_win.updateRessources();
+                        } else {
+                            Gtk::MessageDialog d(my_win, "You can't build you don't have enough ressources",
+                                false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+                            d.run();
+                        }
+                    } else {
+                        if (!CatanMainWindow::clickNext) {
+                            node.setOccupied();
+                            node.setAdjacentNodes();
+                            Node::setClickedNode(node);
+                            Node::isClicked = true;
+                            Node::playerOn = false;
+                            CatanMainWindow::clickNext = true;
+                        } else {
+                            Gtk::MessageDialog d(my_win, "Next player turn! click next",
+                                    false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+                            d.run();
+                        }
+                    }
+                } 
+            }
+                queue_draw();
+        } else {
+            // CatanMainWindow win;
+            Gtk::MessageDialog d(my_win, "Press on the BUILD button to enable building",
+                false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+            d.run();
+        }
     } else {
-        // CatanMainWindow win;
-        Gtk::MessageDialog d(my_win, "Press on the BUILD button to enable building",
-            false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_OK);
+         Gtk::MessageDialog d(my_win, "Please choose the number of the players from the combobox to start the play!",
+                false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK);
         d.run();
     }
 }
@@ -78,7 +146,6 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         this->drawHouses(cr);
 
     }
-
     // update the widget
     queue_draw();
 
@@ -194,54 +261,94 @@ void Drawing::setTuiles(int index, std::string img)
 // Initialize the draw house method
 void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    // to check if the players are setted up to prevent overwritting
-    if (!my_win.checkPlayers()) {
-        std::cout << "setting playuers " << std::endl;
-        my_win.getPlayers();
-    }
     if (Node::clickedNode[0].getX() != 0) {
         if (Node::isClicked) {
-            my_win.setCurrentPlayer();
-            Player currentPlayer = my_win.getCurrentPlayer();
+            // my_win.setCurrentPlayer();
+            // CatanMainWindow::currPlayer = my_win.getCurrentPlayer();
             // std::cout << "CURRREEENT " << currentPlayer.getSettlment();
-            currentPlayer.setAppropriateNode(Node::clickedNode[0]);
-            Player::allClickedNodes->push_back(currentPlayer);
+            CatanMainWindow::currPlayer.setAppropriateNode(Node::clickedNode[0]);
+            CatanMainWindow::currPlayer.setCorrespondedTiles(Node::clickedNode[0], tuilesVector);
+            if (CatanMainWindow::firstStage)
+                CatanMainWindow::currPlayer.setRessources(Node::clickedNode[0], tuilesVector);
+            Player::allClickedNodes->push_back(CatanMainWindow::currPlayer);
+            CatanMainWindow::currPlayer.setScore(1);
+            my_win.updateRessources();
             Node::isClicked = false;
             Node::allClickedNodes->push_back(Node::clickedNode[0]);
         }
         for (int j = 0; j < Player::allClickedNodes->size(); j++) {
-            houseImage = Gdk::Pixbuf::create_from_file(Player::allClickedNodes->at(j).getSettlment());
-            houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
-                                                Gdk::INTERP_BILINEAR);
-            cr->save();
+            if (CatanMainWindow::firstStage) {
+                houseImage = Gdk::Pixbuf::create_from_file(Player::allClickedNodes->at(j).getSettlment());
+                houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
+                                                    Gdk::INTERP_BILINEAR);
+                cr->save();
+                // Player::allClickedEdges->at(j)
+                Node currentNode = Player::allClickedNodes->at(j).getAppropriateNode();
+                double x_pos = currentNode.getX() - 20;
+                double y_pos = currentNode.getY() - 20;
 
-            Node currentNode = Player::allClickedNodes->at(j).getAppropriateNode();
-            double x_pos = currentNode.getX() - 20;
-            double y_pos = currentNode.getY() - 20;
-
-            Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
-            cr->rectangle(0, 0, 1000, 900);
-            cr->fill();
-            // cr->restore();
-            
-            // Node::clickedNode[0].setAdjacentNodes();
-            currentNode.setAdjacentNodes();
-            std::vector<Node> adjacentNodes = currentNode.getAdjacentNodes();
-            for (int i = 0; i < adjacentNodes.size(); i++) {
-                // search the node from all nodes
-                Node specifiNode = Node::getSpecificNode(adjacentNodes[i]);
-                Node::allClickedNodes->push_back(specifiNode);
-                // if we find that node 
-                if (specifiNode.getX()) {
-                    cr->set_line_width(1.0);
-                    cr->save();
-                    cr->arc(specifiNode.getX(), specifiNode.getY(), 7.2, 0.0, 2 * M_PI);
-                    cr->close_path();
-                    cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
-                    cr->fill_preserve();
-                    // cr->restore();
-                    cr->stroke();
+                Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
+                cr->rectangle(0, 0, 1000, 900);
+                cr->fill();
+                // cr->restore();
+                
+                // Node::clickedNode[0].setAdjacentNodes();
+                currentNode.setAdjacentNodes();
+                std::vector<Node> adjacentNodes = currentNode.getAdjacentNodes();
+                for (int i = 0; i < adjacentNodes.size(); i++) {
+                    // search the node from all nodes
+                    Node specifiNode = Node::getSpecificNode(adjacentNodes[i]);
+                    Node::allClickedNodes->push_back(specifiNode);
+                    // if we find that node 
+                    if (specifiNode.getX()) {
+                        cr->set_line_width(1.0);
+                        cr->save();
+                        cr->arc(specifiNode.getX(), specifiNode.getY(), 7.2, 0.0, 2 * M_PI);
+                        cr->close_path();
+                        cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
+                        cr->fill_preserve();
+                        // cr->restore();
+                        cr->stroke();
+                    }
                 }
+            } else {
+                int dice = my_win.getDiceValue();
+                Player::allClickedNodes->at(j).setRessources(Node::clickedNode[0], tuilesVector, dice, true);
+                my_win.updateRessources();
+                houseImage = Gdk::Pixbuf::create_from_file(Player::allClickedNodes->at(j).getSettlment());
+                houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
+                                                    Gdk::INTERP_BILINEAR);
+                cr->save();
+                // Player::allClickedEdges->at(j)
+                Node currentNode = Player::allClickedNodes->at(j).getAppropriateNode();
+                double x_pos = currentNode.getX() - 20;
+                double y_pos = currentNode.getY() - 20;
+
+                Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
+                cr->rectangle(0, 0, 1000, 900);
+                cr->fill();
+                // cr->restore();
+                
+                // Node::clickedNode[0].setAdjacentNodes();
+                currentNode.setAdjacentNodes();
+                std::vector<Node> adjacentNodes = currentNode.getAdjacentNodes();
+                for (int i = 0; i < adjacentNodes.size(); i++) {
+                    // search the node from all nodes
+                    Node specifiNode = Node::getSpecificNode(adjacentNodes[i]);
+                    Node::allClickedNodes->push_back(specifiNode);
+                    // if we find that node 
+                    if (specifiNode.getX()) {
+                        cr->set_line_width(1.0);
+                        cr->save();
+                        cr->arc(specifiNode.getX(), specifiNode.getY(), 7.2, 0.0, 2 * M_PI);
+                        cr->close_path();
+                        cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
+                        cr->fill_preserve();
+                        // cr->restore();
+                        cr->stroke();
+                    }
+                }
+
             }
         }
     }
@@ -249,10 +356,10 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    if (!my_win.checkPlayers()) {
-        std::cout << "setting playuers " << std::endl;
-        my_win.getPlayers();
-    }
+    // if (!my_win.checkPlayers()) {
+    //     std::cout << "setting playuers " << std::endl;
+    //     my_win.getPlayers();
+    // }
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         if (Edge::isClicked) {
@@ -390,8 +497,21 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     rightUpBox->pack_start(startDice);
     rightUpBox->pack_start(combo);
     rightUpBox->pack_start(choosePlayer);
-    // rightUpBox->set_halign(Gtk::ALIGN_END);
-    // rightUpBox->set_valign(Gtk::ALIGN_END);
+
+    // configure the ressource frame
+    ressourceLabel.set_text("Brick=1\nLumber=1\nGrain=1\nWool=1\nOre=1");
+    ressourceLabel.set_margin_top(10);
+    ressourceLabel.set_margin_right(10);
+    ressourceLabel.set_margin_left(10);
+    ressourceLabel.set_margin_bottom(10);
+    ressourceFrame.add(ressourceLabel);
+    ressourceFrame.set_label("Ressources");
+    ressourceFrame.set_margin_left(10);
+    ressourceFrame.set_margin_right(10);
+    ressourceFrame.set_margin_top(10);
+    ressourceFrame.set_margin_bottom(10);
+    ressourceGrid.attach(ressourceFrame, 0, 0, 1, 1);
+
     // attach into grid and center the main grid
     rightUpBox->set_margin_left(10);
     rightUpBox->set_margin_right(10);
@@ -399,8 +519,7 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     rightUpBox->set_margin_bottom(10);
     mainGrid.set_column_spacing(20);
     mainGrid.attach(imageBox, 1, 0, 3, 1);
-    // mainGrid.attach(leftFrame, 0, 0, 1, 1);
-    // mainGrid.attach(*rightUpBox, 6, 0, 1, 1);
+
     rightFrame.add(*rightUpBox);
     rightFrame.set_label("BBD");
     rightFrame.set_margin_left(10);
@@ -411,10 +530,8 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     rightGrid.attach(rightFrame, 4, 0, 1, 1);
     mainGrid.attach(rightGrid, 4, 0, 1, 1);
     mainGrid.attach(leftGrid, 0, 0, 1, 1);
-    // mainGrid.set_halign(Gtk::ALIGN_CENTER);
-    // mainGrid.set_valign(Gtk::ALIGN_CENTER);
+    mainGrid.attach(ressourceGrid, 5, 0, 1, 1);
 
-    // queue_draw();
 
     // add grid
     add(mainGrid);
@@ -468,7 +585,13 @@ void CatanMainWindow::switchPlayer()
         left_label.set_text("the turn is up to the user number " + std::to_string(CatanMainWindow::turn)
             + "\nScore = " + std::to_string(this->currentPlayer.getScore()));
         CatanMainWindow::playerId = 0;
+        CatanMainWindow::firstStage = false;
     }
+    updateRessources();
+
+    CatanMainWindow::switchPlay = true;
+    CatanMainWindow::clickNext = false;
+    CatanMainWindow::clickNextRoute = false;
 }
 
 
@@ -480,22 +603,29 @@ Player CatanMainWindow::getCurrentPlayer()
 void CatanMainWindow::setCurrentPlayer()
 {
     this->currentPlayer = this->players.at(CatanMainWindow::playerId);
+    CatanMainWindow::currPlayer = this->currentPlayer;
 }
 
 void CatanMainWindow::getPlayersFromCombo()
 {
-    Gtk::MessageDialog dialog(*this, "Number of players", false, Gtk::MESSAGE_INFO);
-    dialog.set_secondary_text("There will be " + combo.get_active_text() + " players!");
-    dialog.run();
-    CatanMainWindow::startPlay = true;
-    CatanMainWindow::comboValue = std::stoi(combo.get_active_text());
-    choosePlayer.hide();
-    combo.hide();
+    try {
+        CatanMainWindow::comboValue = std::stoi(combo.get_active_text());
+        Gtk::MessageDialog dialog(*this, "Number of players", false, Gtk::MESSAGE_INFO);
+        dialog.set_secondary_text("There will be " + combo.get_active_text() + " players!");
+        dialog.run();
+        CatanMainWindow::startPlay = true;
+        choosePlayer.hide();
+        combo.hide();
+    } catch(std::exception& e) {
+        Gtk::MessageDialog dialog(*this, "Error ! please choose the right number of players", false, Gtk::MESSAGE_WARNING);
+        dialog.run();
+    }
 }
 
 bool CatanMainWindow::startPlay = false;
 int CatanMainWindow::comboValue;
 int CatanMainWindow::turn = 1;
+Player CatanMainWindow::currPlayer;
 
 void CatanMainWindow::getPlayers()
 {
@@ -513,3 +643,25 @@ bool CatanMainWindow::checkPlayers()
     else 
         return false;
 }
+
+void CatanMainWindow::updateRessources()
+{
+
+    int numBrick = CatanMainWindow::currPlayer.getNumberOfBrick();
+    int numLumber =CatanMainWindow::currPlayer.getNumberOfLumber();
+    int numWool = CatanMainWindow::currPlayer.getNumberOfWool();
+    int numOre = CatanMainWindow::currPlayer.getNumberOfOre();
+    int numGrain = CatanMainWindow::currPlayer.getNumberOfGrain();
+    ressourceLabel.set_text(
+        "Brick=" + std::to_string(numBrick) + 
+        "\nLumber=" + std::to_string(numLumber) +
+        "\nGrain=" + std::to_string(numGrain) + 
+        "\nWool=" + std::to_string(numWool) +
+        "\nOre=" + std::to_string(numOre)
+    );
+}
+
+bool CatanMainWindow::switchPlay = false;
+bool CatanMainWindow::firstStage = true;
+bool CatanMainWindow::clickNext = false;
+bool CatanMainWindow::clickNextRoute = false;
