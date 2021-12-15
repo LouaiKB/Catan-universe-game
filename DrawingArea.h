@@ -34,7 +34,7 @@ private:
         "Tokens/10.png", "Tokens/10_.png", "Tokens/10__.png", "Tokens/11.png", "Tokens/11_.png",
         "Tokens/11__.png", "Tokens/12.png", "Tokens/12_.png", "Tokens/Brigand.png"
     };
-    /*
+    /**
      * tokenPositions is a vector that contains the x position, the y position and the type of the ressource
      * {x position, y position, type of the ressource}
      * we have 5 types of ressources: 1- Brique, 2- Pierre, 3- Mouton, 4- Blé, 5-Bois.
@@ -48,6 +48,7 @@ private:
         {730, 630, 2}, {350, 703, 5}, {600, 703, 4}, {475, 769, 5}
     };
     std::vector<int> thiefTokenPositions = {600, 425};
+    // here we will randomize token positions to change them at each play
     std::vector<std::vector<int>> randTokensPositions = shuffleTokensPositions();
     std::vector<Tuile> *tuilesVector = new std::vector<Tuile>(28);
     CatanMainWindow &my_win;
@@ -57,9 +58,7 @@ class CatanMainWindow : public Gtk::Window
 {
 public:
     CatanMainWindow();
-    // CatanMainWindow(int);
     virtual ~CatanMainWindow();
-    // bool onClicked(GdkEventButton* button_event);
     void onClickStartDice();
     void setDiceValue(int);
     void enableBuild();

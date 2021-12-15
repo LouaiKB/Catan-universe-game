@@ -1,5 +1,10 @@
 #include "DrawingArea.h"
 
+/**
+ * @brief Construct a new Drawing:: Drawing object 
+ * 
+ * @param w Gtk::Window object
+ */
 Drawing::Drawing(CatanMainWindow &w) : my_win(w)
 {
     mainBoardImage = Gdk::Pixbuf::create_from_file("images/Board.png");
@@ -8,24 +13,42 @@ Drawing::Drawing(CatanMainWindow &w) : my_win(w)
 
 Drawing::~Drawing() {}
 
+/**
+ * @brief on press event on the main board, do stuff
+ * 
+ * @param event 
+ * @return true 
+ * @return false 
+ */
 bool Drawing::on_button_press_event(GdkEventButton* event)
 {
+    // set current player on switching button
     if (CatanMainWindow::switchPlay) {
         my_win.setCurrentPlayer();
         CatanMainWindow::switchPlay = false;
     }
 
+
     if (CatanMainWindow::startPlay) {
         // to check if the players are setted up to prevent overwritting
         if (!my_win.checkPlayers()) {
-            std::cout << "setting playuers " << std::endl;
             my_win.getPlayers();
             my_win.setCurrentPlayer();
         }
+
+        /**
+         * @brief if building route is enable; get the clicked edge and draw it
+         * 
+         */
         if (Node::buildRoute) {
+            // create a node object from the clicked node
             Node node((int)event->x, (int)event->y);
+            // get the specific edge from all the edges
             Edge edge = Edge::getSpecificEdge(node, Edge::allEdges);
+            // get specific nodes of the edge (the clicked edge is between these two nodes)
             std::vector<Node> nodesOfTheEdge = Edge::getNodesOfAnEdge(edge);
+
+            // here we will check if we can build a route or not, in other terms we will check if there is house or not
             if (Node::checkIfNodeExists(nodesOfTheEdge.at(0), Node::allClickedNodes) &&
                 Node::checkIfNodeExists(nodesOfTheEdge.at(1), Node::allClickedNodes)) {
                 if (Edge::checkIfNodeExists(edge, Edge::allEdges)) {
@@ -67,6 +90,10 @@ bool Drawing::on_button_press_event(GdkEventButton* event)
             return 1;
         }
 
+        /**
+         * @brief if building house is enable; get the clicked node and draw the settlment or city
+         * 
+         */
         if (Node::playerOn) {
             Node node((int)event->x, (int)event->y);
             if (Node::checkIfNodeExists(node, Node::allNodes)) {
@@ -152,6 +179,13 @@ bool Drawing::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     return true;
 }
 
+/**
+ * @brief draw the main window
+ * 
+ * @param cr 
+ * @param mainWidth 
+ * @param mainHeight 
+ */
 void Drawing::drawMainWindow(const Cairo::RefPtr<Cairo::Context> &cr, const int mainWidth, const int mainHeight)
 {
     mainBoardImage = mainBoardImage->scale_simple(mainWidth, mainHeight, Gdk::INTERP_BILINEAR);
@@ -162,6 +196,11 @@ void Drawing::drawMainWindow(const Cairo::RefPtr<Cairo::Context> &cr, const int 
     cr->restore();
 }
 
+/**
+ * @brief draw the tokens 
+ * 
+ * @param cr 
+ */
 void Drawing::drawTokens(const Cairo::RefPtr<Cairo::Context> &cr)
 {    
     // Drawing all tokens
@@ -246,6 +285,12 @@ void Drawing::drawNodeCircles(const Cairo::RefPtr<Cairo::Context> &cr)
     }
 }
 
+/**
+ * @brief set the tuiles caractiristics: number, ressource, nodes coordinates and edges coordinates
+ * 
+ * @param index 
+ * @param img 
+ */
 void Drawing::setTuiles(int index, std::string img)
 {
     if (index <= 19)
@@ -263,9 +308,6 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 {
     if (Node::clickedNode[0].getX() != 0) {
         if (Node::isClicked) {
-            // my_win.setCurrentPlayer();
-            // CatanMainWindow::currPlayer = my_win.getCurrentPlayer();
-            // std::cout << "CURRREEENT " << currentPlayer.getSettlment();
             CatanMainWindow::currPlayer.setAppropriateNode(Node::clickedNode[0]);
             CatanMainWindow::currPlayer.setCorrespondedTiles(Node::clickedNode[0], tuilesVector);
             if (CatanMainWindow::firstStage)
@@ -282,7 +324,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
                 houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
                                                     Gdk::INTERP_BILINEAR);
                 cr->save();
-                // Player::allClickedEdges->at(j)
+
                 Node currentNode = Player::allClickedNodes->at(j).getAppropriateNode();
                 double x_pos = currentNode.getX() - 20;
                 double y_pos = currentNode.getY() - 20;
@@ -290,9 +332,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
                 Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
                 cr->rectangle(0, 0, 1000, 900);
                 cr->fill();
-                // cr->restore();
-                
-                // Node::clickedNode[0].setAdjacentNodes();
+
                 currentNode.setAdjacentNodes();
                 std::vector<Node> adjacentNodes = currentNode.getAdjacentNodes();
                 for (int i = 0; i < adjacentNodes.size(); i++) {
@@ -307,7 +347,6 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
                         cr->close_path();
                         cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
                         cr->fill_preserve();
-                        // cr->restore();
                         cr->stroke();
                     }
                 }
@@ -319,7 +358,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
                 houseImage = houseImage->scale_simple((houseImage->get_height()) * 0.5, (houseImage->get_width()) * 0.5,
                                                     Gdk::INTERP_BILINEAR);
                 cr->save();
-                // Player::allClickedEdges->at(j)
+
                 Node currentNode = Player::allClickedNodes->at(j).getAppropriateNode();
                 double x_pos = currentNode.getX() - 20;
                 double y_pos = currentNode.getY() - 20;
@@ -327,9 +366,7 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
                 Gdk::Cairo::set_source_pixbuf(cr, houseImage, x_pos, y_pos);
                 cr->rectangle(0, 0, 1000, 900);
                 cr->fill();
-                // cr->restore();
-                
-                // Node::clickedNode[0].setAdjacentNodes();
+
                 currentNode.setAdjacentNodes();
                 std::vector<Node> adjacentNodes = currentNode.getAdjacentNodes();
                 for (int i = 0; i < adjacentNodes.size(); i++) {
@@ -344,11 +381,9 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
                         cr->close_path();
                         cr->set_source_rgba(0.8, 0.0, 0.0, 0.6);
                         cr->fill_preserve();
-                        // cr->restore();
                         cr->stroke();
                     }
                 }
-
             }
         }
     }
@@ -356,10 +391,6 @@ void Drawing::drawHouses(const Cairo::RefPtr<Cairo::Context> &cr)
 
 void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    // if (!my_win.checkPlayers()) {
-    //     std::cout << "setting playuers " << std::endl;
-    //     my_win.getPlayers();
-    // }
     if (Edge::clickedEdge[0].getX() != 0) {
         Edge edge = Edge::clickedEdge[0];
         if (Edge::isClicked) {
@@ -411,6 +442,11 @@ void Drawing::drawRoutes(const Cairo::RefPtr<Cairo::Context> &cr)
     }
 }
 
+/**
+ * @brief randomizing the token positions
+ * 
+ * @return std::vector<std::vector<int>> 
+ */
 std::vector<std::vector<int>> Drawing::shuffleTokensPositions()
 {
     std::random_device rd;
@@ -606,6 +642,10 @@ void CatanMainWindow::setCurrentPlayer()
     CatanMainWindow::currPlayer = this->currentPlayer;
 }
 
+/**
+ * @brief get number of players from the combo box
+ * 
+ */
 void CatanMainWindow::getPlayersFromCombo()
 {
     try {
@@ -622,11 +662,16 @@ void CatanMainWindow::getPlayersFromCombo()
     }
 }
 
+//initialize the static variables
 bool CatanMainWindow::startPlay = false;
 int CatanMainWindow::comboValue;
 int CatanMainWindow::turn = 1;
 Player CatanMainWindow::currPlayer;
 
+/**
+ * @brief set the number of players according to the combo box value
+ * 
+ */
 void CatanMainWindow::getPlayers()
 {
     Player player;
@@ -636,6 +681,7 @@ void CatanMainWindow::getPlayers()
     }
 }
 
+// check if the players are setted or not
 bool CatanMainWindow::checkPlayers()
 {
     if (this->players.size() != 0)

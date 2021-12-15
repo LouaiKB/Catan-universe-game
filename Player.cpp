@@ -1,11 +1,19 @@
 #include "Player.h"
 
+/**
+ * @brief Initialize all the prototypes in the Player.h file
+ * 
+ */
+
 GamePlay::GamePlay() {}
 GamePlay::~GamePlay() {}
 
-// void GamePlay::firstSettlmentPlay() {}
-// void GamePlay::secondSettlmentPlay() {}
-// void GamePlay::loopPlay() {}
+
+/**
+ * @brief get a random number for the dive value from 2 to 12
+ * 
+ * @return int - dive value
+ */
 
 int GamePlay::startDice() 
 {
@@ -15,6 +23,10 @@ int GamePlay::startDice()
     return distr(gen);
 }
 
+/**
+ * @brief set the static variable Node::playerrOn on true to enable building
+ * 
+ */
 void GamePlay::enableBuilding()
 {
     Node::playerOn = true;
@@ -25,21 +37,16 @@ void GamePlay::enableBuildingRoute()
     Node::buildRoute = true;
 }
 
-void GamePlay::setPlayers()
-{
-    this->players->push_back(Player(1));
-    this->players->push_back(Player(2));
-}
-
-std::vector<Player>* GamePlay::getPlayers()
-{
-    return this->players;
-}
-
 Player::Player() {}
 
+/**
+ * @brief Construct a new Player:: Player object and set settlments and cities
+ * according to the player number (each player have a specific color)
+ * 
+ * @param num - number of player
+ */
+
 Player::Player(int num) : number(num) {
-    std::cout << "Player construyuccerĵgùjlmknsdglmkn" << std::endl;
     this->score = 0;
     switch (this->number)
     {
@@ -97,6 +104,15 @@ int Player::getNumberOfPlayer()
     return this->number;
 }
 
+/**
+ * @brief check if the clicked node is corresponding to the nodes
+ * of the the corresponded tiles and return the corresponded tiles
+ * so each player will have it corresponed tiles. When the dice is lunched and the 
+ * players that have tiles that correspond to the dice value will gain the ressources of the tiles 
+ * 
+ * @param node clicked node (occupied node by a player)
+ * @param allTiles pointer of all the tiles
+ */
 void Player::setCorrespondedTiles(Node node, std::vector<Tuile> *allTiles)
 {
     for (int i = 0; i < allTiles->size(); i++) {
@@ -108,6 +124,14 @@ void Player::setCorrespondedTiles(Node node, std::vector<Tuile> *allTiles)
     }
 }
 
+/**
+ * @brief set ressources that correponds to the corresponded tiles of each player
+ * 
+ * @param node 
+ * @param allTiles 
+ * @param diceValue 
+ * @param isDiceActive 
+ */
 void Player::setRessources(Node node, std::vector<Tuile> *allTiles, int diceValue, bool isDiceActive)
 {
     if(isDiceActive) {
@@ -272,7 +296,12 @@ int Player::getNumberOfWool()
     }
     return n;
 }
-
+/**
+ * @brief remove ressource after building (route, city, settlment...)
+ * @param int ressource the number of the ressource to be removed from the ressource
+ * vector 
+ * 
+ */
 void Player::removeRessourceAfterBuilding(int a)
 {  
     // std::cout << "size before ; " << ressources.size() << std::endl;
@@ -281,7 +310,4 @@ void Player::removeRessourceAfterBuilding(int a)
     if (it != ressources.end()) {
         ressources.erase(it);
     }
-    // this->ressources.erase(std::remove(ressources.begin(), ressources.end(), a), 
-    //     ressources.end());
-    // std::cout << "size after : " << ressources.size() << std::endl;
 }

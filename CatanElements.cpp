@@ -29,6 +29,17 @@ void Tuile::setRessourceOfTuile(int num)
     this->ressource = num;
 }
 
+/**
+ * @brief set nodes coordinates, we will retrieve the coordinates of a tile (x and y)
+ * and set the coordinates of each node 
+ * 
+ * examples:
+ * (first node coordinates = (x = x(of a tile) - 60) (y = (y(of a tile + 28)))
+ * etc..
+ * 
+ * @param x coordinate of the tile object
+ * @param y coordinate of the tile object
+ */
 void Tuile::setNodesCoordinates(int x, int y)
 {
     this->nodes->at(0) = Node(x - 60, y + 28);
@@ -39,6 +50,13 @@ void Tuile::setNodesCoordinates(int x, int y)
     this->nodes->at(5) = Node(x - 20, y + 93);
 }
 
+/**
+ * @brief set edges coordinates, the edge coordinates represente the middle (radius)
+ * of two corresponded nodes
+ * example:
+ * edge1 = is in the middle of node 1 and node 2
+ * 
+ */
 void Tuile::setEdgesCoordinates()
 {
     this->edges->at(0) = Tuile::getMiddleBetweenTwoNodes(nodes->at(0), nodes->at(1));
@@ -49,10 +67,20 @@ void Tuile::setEdgesCoordinates()
     this->edges->at(5) = Tuile::getMiddleBetweenTwoNodes(nodes->at(5), nodes->at(0));
 }
 
+/**
+ * @brief static method that returns an edge object
+ * 
+ * @param a 
+ * @param b 
+ * @return Edge 
+ */
 Edge Tuile::getMiddleBetweenTwoNodes(Node a, Node b)
 {
+    // compute the edge coordonants (an edge is in the middle of two nodes)
     int middleX = (a.getX() + b.getX()) / 2;
     int middleY = (a.getY() + b.getY()) / 2;
+
+    // get the radius to get the corresponded nodes after
     int xRadius = middleX - a.getX();
     int yRadius;
     
@@ -87,6 +115,12 @@ bool Node::isOccupied() {
     return this->occupied;
 }
 
+/**
+ * @brief Set the Adjacent Nodes for a clicked node that have a settlment
+ * to have the three adjacent nodes to disable building in these nodes 
+ * 
+ */
+
 void Node::setAdjacentNodes() {
     
     // setting the side Node 
@@ -113,6 +147,7 @@ std::vector<Node> Node::getAdjacentNodes() {
     return this->adjacentNodes;
 }
 
+// initialize static vectors
 std::vector<Node> *Node::occupiedNodes = new std::vector<Node>();
 std::vector<Node> *Node::allNodes = new std::vector<Node>();
 std::vector<Node> *Node::allClickedNodes = new std::vector<Node>();
@@ -127,6 +162,7 @@ void Node::setAllNodes(Node node)
     Node::allNodes->push_back(node);
 }
 
+// set dynamically the clicked node
 void Node::setClickedNode(Node node)
 {
     delete[] Node::clickedNode;
