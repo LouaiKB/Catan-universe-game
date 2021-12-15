@@ -506,7 +506,7 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     leftUpBox->set_margin_right(10);
     leftUpBox->set_margin_top(10);
     leftUpBox->set_margin_bottom(10);
-    leftFrame.set_label("left");
+    leftFrame.set_label("Game play buttons");
     leftFrame.add(*leftUpBox);
     leftFrame.set_margin_left(10);
     leftFrame.set_margin_right(10);
@@ -557,7 +557,7 @@ CatanMainWindow::CatanMainWindow() : drawing(*this) {
     mainGrid.attach(imageBox, 1, 0, 3, 1);
 
     rightFrame.add(*rightUpBox);
-    rightFrame.set_label("BBD");
+    rightFrame.set_label("Configuration buttons");
     rightFrame.set_margin_left(10);
     rightFrame.set_margin_right(10);
     rightFrame.set_margin_top(10);
